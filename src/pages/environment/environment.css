@@ -1,0 +1,28 @@
+.environment {
+  margin-left: 220px;
+}
+
+.status {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 250px;
+}
+
+.status span {
+  margin: 40px;
+  font-size: 20px;
+}
+
+.recomended {
+  color: red;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-left: 30px;
+  font-size: 17px;
+}
+
+.recomended span {
+  margin: 20px;
+}
