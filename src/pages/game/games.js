@@ -1,10 +1,11 @@
 var { drawConnectors, drawLandmarks } = require("@mediapipe/drawing_utils");
 var { POSE_CONNECTIONS, POSE_LANDMARKS } = require("@mediapipe/pose");
 
+var { width, height } = require("../../pages/game/utils");
 var { setpose1Coordinates, setpose1CanvasCtx, pose1stars } = require("../../pages/game/pose1");
 
-setPosePoseCoordinates = [setpose1Coordinates];
-setPoseCanvasCtxs = [setpose1CanvasCtx];
+let setPosePoseCoordinates = [setpose1Coordinates];
+let setPoseCanvasCtxs = [setpose1CanvasCtx];
 
 let canvasCtx;
 let poseCoordinates = [];
@@ -51,10 +52,4 @@ function runGameFrame(results) {
 module.exports = {
     runGameFrame,
     setCanvasCtx,
-    Star,
-    poseLMS,
-    calculate_angle,
-    coordinatesTouching,
-    width,
-    height,
 };
