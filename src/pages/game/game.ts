@@ -213,23 +213,23 @@ let topStar = new Star(
 
 let sidStarCoordinates = [220, 240];
 
-let leftStar = new Star(
-	"leftStar",
+let pose1LeftStar = new Star(
+	"pose1LeftStar",
 	sidStarCoordinates[0],
 	sidStarCoordinates[1],
 	() => {
-		return leftStar.isTouchingCoordinates(wristsMiddlePoint);
+		return pose1LeftStar.isTouchingCoordinates(wristsMiddlePoint);
 	},
 	undefined,
 	true
 ) as Star;
 
-let rightStar = new Star(
-	"rightStar",
+let pose1RightStar = new Star(
+	"pose1RightStar",
 	width - sidStarCoordinates[0],
 	sidStarCoordinates[1],
 	() => {
-		return rightStar.isTouchingCoordinates(wristsMiddlePoint);
+		return pose1RightStar.isTouchingCoordinates(wristsMiddlePoint);
 	},
 	undefined,
 	true
@@ -238,8 +238,8 @@ let rightStar = new Star(
 let angleMin = 150;
 let angleMax = 200;
 
-let leftElbowStar = new Star(
-	"leftElbowStar",
+let pose1LeftElbowStar = new Star(
+	"pose1LeftElbowStar",
 	left_elbow[0],
 	left_elbow[1],
 	() => {
@@ -250,8 +250,8 @@ let leftElbowStar = new Star(
 	}
 ) as Star;
 
-let rightElbowStar = new Star(
-	"rightElbowStar",
+let pose1RightElbowStar = new Star(
+	"pose1RightElbowStar",
 	right_elbow[0],
 	right_elbow[1],
 	() => {
@@ -274,7 +274,14 @@ let wristsMiddleStar = new Star(
 	}
 ) as Star;
 
-let pose1stars = [topStar, leftStar, rightStar, leftElbowStar, rightElbowStar, wristsMiddleStar];
+let pose1stars = [
+	topStar,
+	pose1LeftStar,
+	pose1RightStar,
+	pose1LeftElbowStar,
+	pose1RightElbowStar,
+	wristsMiddleStar,
+];
 
 function onResults(results: any) {
 	canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);

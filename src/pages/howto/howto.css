@@ -1,0 +1,9 @@
+.howto {
+    margin-left: 300px; /* 260 + 40 */
+    margin-top: 40px;
+}
+
+.howto video {
+    width: 720px;
+    height: 480px;
+}

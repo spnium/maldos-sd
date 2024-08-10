@@ -172,20 +172,20 @@ let topStar = new Star("topStar", width / 2, 120, () => {
     return topStar.isTouchingCoordinates(wristsMiddlePoint);
 }, undefined, true);
 let sidStarCoordinates = [220, 240];
-let leftStar = new Star("leftStar", sidStarCoordinates[0], sidStarCoordinates[1], () => {
-    return leftStar.isTouchingCoordinates(wristsMiddlePoint);
+let pose1LeftStar = new Star("pose1LeftStar", sidStarCoordinates[0], sidStarCoordinates[1], () => {
+    return pose1LeftStar.isTouchingCoordinates(wristsMiddlePoint);
 }, undefined, true);
-let rightStar = new Star("rightStar", width - sidStarCoordinates[0], sidStarCoordinates[1], () => {
-    return rightStar.isTouchingCoordinates(wristsMiddlePoint);
+let pose1RightStar = new Star("pose1RightStar", width - sidStarCoordinates[0], sidStarCoordinates[1], () => {
+    return pose1RightStar.isTouchingCoordinates(wristsMiddlePoint);
 }, undefined, true);
 let angleMin = 150;
 let angleMax = 200;
-let leftElbowStar = new Star("leftElbowStar", left_elbow[0], left_elbow[1], () => {
+let pose1LeftElbowStar = new Star("pose1LeftElbowStar", left_elbow[0], left_elbow[1], () => {
     return left_arm_angle > angleMin && left_arm_angle < angleMax;
 }, () => {
     return left_elbow;
 });
-let rightElbowStar = new Star("rightElbowStar", right_elbow[0], right_elbow[1], () => {
+let pose1RightElbowStar = new Star("pose1RightElbowStar", right_elbow[0], right_elbow[1], () => {
     return right_arm_angle > angleMin && right_arm_angle < angleMax;
 }, () => {
     return right_elbow;
@@ -195,7 +195,14 @@ let wristsMiddleStar = new Star("wristsMiddleStar", wristsMiddlePoint[0], wrists
 }, () => {
     return wristsMiddlePoint;
 });
-let pose1stars = [topStar, leftStar, rightStar, leftElbowStar, rightElbowStar, wristsMiddleStar];
+let pose1stars = [
+    topStar,
+    pose1LeftStar,
+    pose1RightStar,
+    pose1LeftElbowStar,
+    pose1RightElbowStar,
+    wristsMiddleStar,
+];
 function onResults(results) {
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
     canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
