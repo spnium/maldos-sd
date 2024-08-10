@@ -158,9 +158,8 @@ const createWindow = () => {
                 startTimer();
                 break;
             case "game":
-                win.setSize(1280, 720, false);
+                win.setSize(1340, 748, false);
                 win.center();
-            // sendToRenderer("start-web-game", true);
             case "settings":
                 sendToRenderer("render-settings", (timeLimit - 1) / 60);
                 break;
@@ -237,13 +236,15 @@ electron_1.ipcMain.on("set-time-limit", (event, arg) => {
     store.set("time_limit", TIMELIMIT);
 });
 function getTemperature() {
-    // return Math.round(
-    // 	+execSync(`ioreg -rn AppleSmartBattery`, { encoding: "utf8" })
-    // 		.toString()
-    // 		.split("\n")[50]
-    // 		.replace(/\D/g, "") / 100
-    // );
-    return 32;
+    let outputStringArr = (0, child_process_1.execSync)(`ioreg -rn AppleSmartBattery`, { encoding: "utf8" })
+        .toString()
+        .split("\n");
+    console.log(outputStringArr);
+    let index = outputStringArr.findIndex((x) => x.includes('"Temperature" = '));
+    console.log(index);
+    let tempInt = +outputStringArr[index].replace(/\D/g, "");
+    return Math.round(tempInt / 100);
+    // return 32;
 }
 function getLight() {
     return +(0, child_process_1.execSync)(`/Users/maytanan/Desktop/maldos/src/light_sensor/light`, { encoding: "utf8" })
@@ -261,6 +262,3 @@ async function getSound() {
 }
 console.log("Temperature:" + getTemperature());
 console.log("Light:" + getLight());
-// getSound().then((value) => {
-// 	console.log("Sound:" + value);
-// });

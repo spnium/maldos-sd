@@ -36,8 +36,8 @@ const videoElement = document.getElementsByClassName("input_video")[0] as HTMLVi
 const canvasElement = document.getElementsByClassName("output_canvas")[0] as HTMLCanvasElement;
 const canvasCtx = canvasElement.getContext("2d") as CanvasRenderingContext2D;
 
-const width = 1020;
-const height = 680;
+const width = 1080;
+const height = 720;
 
 function calculate_angle(A: number[], B: number[], C: number[]) {
 	var AB = Math.sqrt(Math.pow(B[0] - A[0], 2) + Math.pow(B[1] - A[1], 2));
@@ -268,21 +268,56 @@ pose.setOptions({
 
 pose.onResults(onResults);
 
-const camera = new Camera(videoElement, {
-	onFrame: async () => {
-		await pose.send({ image: videoElement });
-	},
-	width: width,
-	height: height,
-});
+// const camera = new Camera(videoElement, {
+// 	onFrame: async () => {
+// 		await pose.send({ image: videoElement });
+// 	},
+// 	width: width,
+// 	height: height,
+// });
+
+let stream: MediaStream | null = null;
+
+async function setupWebcam() {
+	try {
+		stream = await navigator.mediaDevices.getUserMedia({
+			video: {
+				width: { ideal: 1080 },
+				height: { ideal: 720 },
+			},
+		});
+
+		videoElement.srcObject = stream;
+		videoElement.play();
+	} catch (error) {
+		console.error("Error accessing webcam:", error);
+	}
+}
+
+const runFrame = async () => {
+	await pose.send({ image: videoElement });
+	videoElement.requestVideoFrameCallback(runFrame);
+};
+
+videoElement.requestVideoFrameCallback(runFrame);
+
+function stopWebcam() {
+	if (stream) {
+		// Stop all tracks in the stream
+		stream.getTracks().forEach((track) => track.stop());
+		videoElement.srcObject = null; // Optionally clear the video source
+	}
+}
 
 ipcRenderer.on("start-web-game", () => {
-	camera.start();
+	// camera.start();
+	setupWebcam();
 	document.getElementById("listgamehidden")?.classList.remove("hidden");
 });
 
 ipcRenderer.on("stop-web-game", () => {
-	camera.stop();
+	// camera.stop();
+	stopWebcam();
 	document.getElementById("listgamehidden")?.classList.add("hidden");
 });
 

@@ -154,9 +154,8 @@ const createWindow = () => {
 				startTimer();
 				break;
 			case "game":
-				win!.setSize(1280, 720, false);
+				win!.setSize(1340, 748, false);
 				win!.center();
-			// sendToRenderer("start-web-game", true);
 			case "settings":
 				sendToRenderer("render-settings", (timeLimit - 1) / 60);
 				break;
@@ -247,13 +246,13 @@ ipcMain.on("set-time-limit", (event: any, arg: any) => {
 });
 
 function getTemperature(): number {
-	// return Math.round(
-	// 	+execSync(`ioreg -rn AppleSmartBattery`, { encoding: "utf8" })
-	// 		.toString()
-	// 		.split("\n")[50]
-	// 		.replace(/\D/g, "") / 100
-	// );
-	return 32;
+	let outputStringArr = execSync(`ioreg -rn AppleSmartBattery`, { encoding: "utf8" })
+		.toString()
+		.split("\n");
+	let index = outputStringArr.findIndex((x) => x.includes('"Temperature" = '));
+	let tempInt = +outputStringArr[index].replace(/\D/g, "");
+	return Math.round(tempInt / 100);
+	// return 32;
 }
 
 function getLight(): number {
@@ -274,9 +273,3 @@ async function getSound(): Promise<number> {
 		// resolve(52);
 	});
 }
-
-console.log("Temperature:" + getTemperature());
-console.log("Light:" + getLight());
-// getSound().then((value) => {
-// 	console.log("Sound:" + value);
-// });

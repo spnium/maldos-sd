@@ -34,8 +34,8 @@ const poseLMS = {
 const videoElement = document.getElementsByClassName("input_video")[0];
 const canvasElement = document.getElementsByClassName("output_canvas")[0];
 const canvasCtx = canvasElement.getContext("2d");
-const width = 1020;
-const height = 680;
+const width = 1080;
+const height = 720;
 function calculate_angle(A, B, C) {
     var AB = Math.sqrt(Math.pow(B[0] - A[0], 2) + Math.pow(B[1] - A[1], 2));
     var BC = Math.sqrt(Math.pow(B[0] - C[0], 2) + Math.pow(B[1] - C[1], 2));
@@ -199,21 +199,51 @@ pose.setOptions({
     minTrackingConfidence: 0.35,
 });
 pose.onResults(onResults);
-const camera = new Camera(videoElement, {
-    onFrame: async () => {
-        await pose.send({ image: videoElement });
-    },
-    width: width,
-    height: height,
-});
+// const camera = new Camera(videoElement, {
+// 	onFrame: async () => {
+// 		await pose.send({ image: videoElement });
+// 	},
+// 	width: width,
+// 	height: height,
+// });
+let stream = null;
+async function setupWebcam() {
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                width: { ideal: 1080 },
+                height: { ideal: 720 },
+            },
+        });
+        videoElement.srcObject = stream;
+        videoElement.play();
+    }
+    catch (error) {
+        console.error("Error accessing webcam:", error);
+    }
+}
+const runFrame = async () => {
+    await pose.send({ image: videoElement });
+    videoElement.requestVideoFrameCallback(runFrame);
+};
+videoElement.requestVideoFrameCallback(runFrame);
+function stopWebcam() {
+    if (stream) {
+        // Stop all tracks in the stream
+        stream.getTracks().forEach((track) => track.stop());
+        videoElement.srcObject = null; // Optionally clear the video source
+    }
+}
 ipcRenderer.on("start-web-game", () => {
     var _a;
-    camera.start();
+    // camera.start();
+    setupWebcam();
     (_a = document.getElementById("listgamehidden")) === null || _a === void 0 ? void 0 : _a.classList.remove("hidden");
 });
 ipcRenderer.on("stop-web-game", () => {
     var _a;
-    camera.stop();
+    // camera.stop();
+    stopWebcam();
     (_a = document.getElementById("listgamehidden")) === null || _a === void 0 ? void 0 : _a.classList.add("hidden");
 });
 // function startGameFromGamePage() {
