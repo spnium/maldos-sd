@@ -2,20 +2,6 @@ import { app, BrowserWindow, ipcMain, Notification } from "electron";
 import path from "node:path";
 import Store from "electron-store";
 import { execSync, exec } from "child_process";
-// import { UDPSocket } from "socket-udp";
-
-// const socket = new UDPSocket({ port: 6969 } as any);
-
-// const handleUDP = async () => {
-// 	for await (const message of socket) {
-// 		//format = "id~score"
-// 		let data = message.toString("utf8").split("~");
-// 		let id = +data[0];
-// 		let score = +data[1];
-// 		console.log(`id: ${id} score: ${score}`);
-// 	}
-// };
-// handleUDP();
 
 const showTimesUpNotification = () => {
 	const notification = new Notification({
@@ -75,6 +61,7 @@ const createWindow = () => {
 	});
 
 	win.loadFile(path.join(__dirname, "/pages/main_page/main.html"));
+	// win.loadFile(path.join(__dirname, "/pages/login_page/login.html"));
 
 	win.webContents.openDevTools({ mode: "detach" });
 

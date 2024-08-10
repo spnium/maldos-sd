@@ -2945,11 +2945,6 @@ smart-buffer@^4.2.0:
   resolved "https://registry.npmjs.org/smart-buffer/-/smart-buffer-4.2.0.tgz"
   integrity sha512-94hK0Hh8rPqQl2xXc3HsaBoOXKV20MToPkcXvwbISWLEs+64sBq5kFgn2kJDHb1Pry9yrP0dxrCI9RRci7RXKg==
 
-socket-udp@^0.4.5:
-  version "0.4.5"
-  resolved "https://registry.npmjs.org/socket-udp/-/socket-udp-0.4.5.tgz"
-  integrity sha512-Glz4XYgHZGUpS8XQLI+OvQXOJX8s1FDiIwy87KCJeqCW0+P7TTl3x4MEitRu76euld1fcryipmBZU9MXFqnaeg==
-
 socks-proxy-agent@^7.0.0:
   version "7.0.0"
   resolved "https://registry.npmjs.org/socks-proxy-agent/-/socks-proxy-agent-7.0.0.tgz"

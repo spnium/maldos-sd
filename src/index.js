@@ -7,18 +7,6 @@ const electron_1 = require("electron");
 const node_path_1 = __importDefault(require("node:path"));
 const electron_store_1 = __importDefault(require("electron-store"));
 const child_process_1 = require("child_process");
-// import { UDPSocket } from "socket-udp";
-// const socket = new UDPSocket({ port: 6969 } as any);
-// const handleUDP = async () => {
-// 	for await (const message of socket) {
-// 		//format = "id~score"
-// 		let data = message.toString("utf8").split("~");
-// 		let id = +data[0];
-// 		let score = +data[1];
-// 		console.log(`id: ${id} score: ${score}`);
-// 	}
-// };
-// handleUDP();
 const showTimesUpNotification = () => {
     const notification = new electron_1.Notification({
         title: "Time's up!",
@@ -67,6 +55,7 @@ const createWindow = () => {
         },
     });
     win.loadFile(node_path_1.default.join(__dirname, "/pages/main_page/main.html"));
+    // win.loadFile(path.join(__dirname, "/pages/login_page/login.html"));
     win.webContents.openDevTools({ mode: "detach" });
     win.on("closed", () => {
         win = null;
