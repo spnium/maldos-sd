@@ -98,14 +98,20 @@ function drawStar(
 }
 
 class Star {
+	public activeTime: number = 0;
+	public startActiveTime: number = NaN;
+	public previouslyActive: boolean = false;
 	constructor(
 		public name: string,
 		public x: number,
 		public y: number,
 		public functionToCheckActive: () => boolean = () => false,
 		public functionToCheckCoordinates: () => number[] = () => [x, y],
+		public hasPermenentlyActiveTimer: boolean = false,
 		public active: boolean = false,
-		public color: string = "yellow"
+		public color: string = "yellow",
+		public permenentlyActive: boolean = false,
+		public timeTotriggerPermanentlyActive: number = 10
 	) {
 		this.x = x;
 		this.y = y;
@@ -118,7 +124,7 @@ class Star {
 			this.x = x;
 			this.y = y;
 		}
-		drawStar(x, y, 30, this.active, this.color, 5);
+		drawStar(x, y, 30, this.permenentlyActive || this.active, this.color, 5);
 	}
 
 	isTouchingCoordinates(coordinates: number[], error: number[] = [50, 50]) {
@@ -137,12 +143,52 @@ class Star {
 	runAll() {
 		[this.x, this.y] = this.functionToCheckCoordinates();
 		this.active = this.functionToCheckActive();
+		if (this.hasPermenentlyActiveTimer) {
+			this.runPermanentlyActiveTimer();
+			if (this.active) {
+				this.drawTimer(this.activeTime);
+			}
+		}
 		this.draw();
+	}
+
+	runPermanentlyActiveTimer() {
+		if (this.active) {
+			this.activeTime = Date.now() / 1000 - this.startActiveTime;
+		}
+		if (this.active && !this.previouslyActive) {
+			this.startActiveTime = Date.now() / 1000;
+			this.previouslyActive = true;
+		}
+		if (!this.active) {
+			this.previouslyActive = false;
+			this.activeTime = 0;
+		}
+		if (
+			this.previouslyActive &&
+			Date.now() / 1000 - this.startActiveTime > this.timeTotriggerPermanentlyActive
+		) {
+			this.permenentlyActive = true;
+		}
+	}
+
+	drawTimer(time: number) {
+		if (!this.permenentlyActive) {
+			let timerWidth = 600;
+			let timerHeight = 40;
+			let timerX = 0;
+			let timerY = 0;
+			canvasCtx.fillStyle = "black";
+			canvasCtx.fillRect(timerX, timerY, timerWidth, timerHeight);
+
+			let timerProgress = time / this.timeTotriggerPermanentlyActive;
+			canvasCtx.fillStyle = "green";
+			canvasCtx.fillRect(timerX, timerY, timerProgress * timerWidth, timerHeight);
+		}
 	}
 }
 
 let poseCoordinates: number[][] = [];
-
 let defaultPoseCoordinate = [-1000, -1000];
 let wristsMiddlePoint = defaultPoseCoordinate;
 let right_wrist = defaultPoseCoordinate;
@@ -154,19 +200,40 @@ let right_elbow = defaultPoseCoordinate;
 let left_shoulder = defaultPoseCoordinate;
 let right_shoulder = defaultPoseCoordinate;
 
-let topStar = new Star("topStar", width / 2, 120, () => {
-	return topStar.isTouchingCoordinates(wristsMiddlePoint);
-}) as Star;
+let topStar = new Star(
+	"topStar",
+	width / 2,
+	120,
+	() => {
+		return topStar.isTouchingCoordinates(wristsMiddlePoint);
+	},
+	undefined,
+	true
+) as Star;
 
 let sidStarCoordinates = [220, 240];
 
-let leftStar = new Star("leftStar", sidStarCoordinates[0], sidStarCoordinates[1], () => {
-	return leftStar.isTouchingCoordinates(wristsMiddlePoint);
-}) as Star;
+let leftStar = new Star(
+	"leftStar",
+	sidStarCoordinates[0],
+	sidStarCoordinates[1],
+	() => {
+		return leftStar.isTouchingCoordinates(wristsMiddlePoint);
+	},
+	undefined,
+	true
+) as Star;
 
-let rightStar = new Star("rightStar", width - sidStarCoordinates[0], sidStarCoordinates[1], () => {
-	return rightStar.isTouchingCoordinates(wristsMiddlePoint);
-}) as Star;
+let rightStar = new Star(
+	"rightStar",
+	width - sidStarCoordinates[0],
+	sidStarCoordinates[1],
+	() => {
+		return rightStar.isTouchingCoordinates(wristsMiddlePoint);
+	},
+	undefined,
+	true
+) as Star;
 
 let angleMin = 150;
 let angleMax = 200;
@@ -207,7 +274,7 @@ let wristsMiddleStar = new Star(
 	}
 ) as Star;
 
-let stars = [topStar, leftStar, rightStar, leftElbowStar, rightElbowStar, wristsMiddleStar];
+let pose1stars = [topStar, leftStar, rightStar, leftElbowStar, rightElbowStar, wristsMiddleStar];
 
 function onResults(results: any) {
 	canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
@@ -246,7 +313,7 @@ function onResults(results: any) {
 		(left_wrist[1] + right_wrist[1]) / 2,
 	];
 
-	stars.forEach((star) => {
+	pose1stars.forEach((star) => {
 		star.runAll();
 	});
 }

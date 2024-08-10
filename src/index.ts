@@ -1,23 +1,21 @@
 import { app, BrowserWindow, ipcMain, Notification } from "electron";
-import path, { resolve } from "node:path";
+import path from "node:path";
 import Store from "electron-store";
 import { execSync, exec } from "child_process";
-import { UDPSocket } from "socket-udp";
-import { spawn } from "node:child_process";
-import { Stream } from "node:stream";
+// import { UDPSocket } from "socket-udp";
 
-const socket = new UDPSocket({ port: 6969 } as any);
+// const socket = new UDPSocket({ port: 6969 } as any);
 
-const handleUDP = async () => {
-	for await (const message of socket) {
-		//format = "id~score"
-		let data = message.toString("utf8").split("~");
-		let id = +data[0];
-		let score = +data[1];
-		console.log(`id: ${id} score: ${score}`);
-	}
-};
-handleUDP();
+// const handleUDP = async () => {
+// 	for await (const message of socket) {
+// 		//format = "id~score"
+// 		let data = message.toString("utf8").split("~");
+// 		let id = +data[0];
+// 		let score = +data[1];
+// 		console.log(`id: ${id} score: ${score}`);
+// 	}
+// };
+// handleUDP();
 
 const showTimesUpNotification = () => {
 	const notification = new Notification({

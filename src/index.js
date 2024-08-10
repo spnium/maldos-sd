@@ -1,11 +1,4 @@
 "use strict";
-var __asyncValues = (this && this.__asyncValues) || function (o) {
-    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-    var m = o[Symbol.asyncIterator], i;
-    return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
-    function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
-    function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -14,31 +7,18 @@ const electron_1 = require("electron");
 const node_path_1 = __importDefault(require("node:path"));
 const electron_store_1 = __importDefault(require("electron-store"));
 const child_process_1 = require("child_process");
-const socket_udp_1 = require("socket-udp");
-const socket = new socket_udp_1.UDPSocket({ port: 6969 });
-const handleUDP = async () => {
-    var _a, e_1, _b, _c;
-    try {
-        for (var _d = true, socket_1 = __asyncValues(socket), socket_1_1; socket_1_1 = await socket_1.next(), _a = socket_1_1.done, !_a; _d = true) {
-            _c = socket_1_1.value;
-            _d = false;
-            const message = _c;
-            //format = "id~score"
-            let data = message.toString("utf8").split("~");
-            let id = +data[0];
-            let score = +data[1];
-            console.log(`id: ${id} score: ${score}`);
-        }
-    }
-    catch (e_1_1) { e_1 = { error: e_1_1 }; }
-    finally {
-        try {
-            if (!_d && !_a && (_b = socket_1.return)) await _b.call(socket_1);
-        }
-        finally { if (e_1) throw e_1.error; }
-    }
-};
-handleUDP();
+// import { UDPSocket } from "socket-udp";
+// const socket = new UDPSocket({ port: 6969 } as any);
+// const handleUDP = async () => {
+// 	for await (const message of socket) {
+// 		//format = "id~score"
+// 		let data = message.toString("utf8").split("~");
+// 		let id = +data[0];
+// 		let score = +data[1];
+// 		console.log(`id: ${id} score: ${score}`);
+// 	}
+// };
+// handleUDP();
 const showTimesUpNotification = () => {
     const notification = new electron_1.Notification({
         title: "Time's up!",
@@ -239,9 +219,7 @@ function getTemperature() {
     let outputStringArr = (0, child_process_1.execSync)(`ioreg -rn AppleSmartBattery`, { encoding: "utf8" })
         .toString()
         .split("\n");
-    console.log(outputStringArr);
     let index = outputStringArr.findIndex((x) => x.includes('"Temperature" = '));
-    console.log(index);
     let tempInt = +outputStringArr[index].replace(/\D/g, "");
     return Math.round(tempInt / 100);
     // return 32;
@@ -260,5 +238,3 @@ async function getSound() {
         // resolve(52);
     });
 }
-console.log("Temperature:" + getTemperature());
-console.log("Light:" + getLight());
