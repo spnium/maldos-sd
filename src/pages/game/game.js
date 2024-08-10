@@ -1,6 +1,5 @@
 "use strict";
 var path = require("path");
-var { Camera } = require("@mediapipe/camera_utils");
 var { drawConnectors, drawLandmarks } = require("@mediapipe/drawing_utils");
 var { Pose, POSE_CONNECTIONS, POSE_LANDMARKS } = require("@mediapipe/pose");
 var { ipcRenderer } = require("electron");
@@ -80,13 +79,12 @@ function drawStar(cx, cy, outerRadius, fill = true, color = "yellow", thickness 
     }
 }
 class Star {
-    constructor(name, x, y, functionToCheckActive = () => false, functionToCheckCoordinates = () => [x, y], hasPermenentlyActiveTimer = false, active = false, color = "yellow", permenentlyActive = false, timeTotriggerPermanentlyActive = 10) {
-        this.name = name;
+    constructor(x, y, functionToCheckActive = () => false, functionToCheckCoordinates = () => [x, y], hasPermanentlyActiveTimer = false, active = false, color = "yellow", permenentlyActive = false, timeTotriggerPermanentlyActive = 10) {
         this.x = x;
         this.y = y;
         this.functionToCheckActive = functionToCheckActive;
         this.functionToCheckCoordinates = functionToCheckCoordinates;
-        this.hasPermenentlyActiveTimer = hasPermenentlyActiveTimer;
+        this.hasPermanentlyActiveTimer = hasPermanentlyActiveTimer;
         this.active = active;
         this.color = color;
         this.permenentlyActive = permenentlyActive;
@@ -112,13 +110,10 @@ class Star {
             coordinates[1] > this.y - error[1] &&
             coordinates[1] < this.y + error[1]);
     }
-    isTouchingPoseLandmark(landmarkId, error = [50, 50]) {
-        return this.isTouchingCoordinates(poseCoordinates[landmarkId], error);
-    }
     runAll() {
         [this.x, this.y] = this.functionToCheckCoordinates();
         this.active = this.functionToCheckActive();
-        if (this.hasPermenentlyActiveTimer) {
+        if (this.hasPermanentlyActiveTimer) {
             this.runPermanentlyActiveTimer();
             if (this.active) {
                 this.drawTimer(this.activeTime);
@@ -145,7 +140,7 @@ class Star {
     }
     drawTimer(time) {
         if (!this.permenentlyActive) {
-            let timerWidth = 600;
+            let timerWidth = 400;
             let timerHeight = 40;
             let timerX = 0;
             let timerY = 0;
@@ -168,29 +163,29 @@ let left_elbow = defaultPoseCoordinate;
 let right_elbow = defaultPoseCoordinate;
 let left_shoulder = defaultPoseCoordinate;
 let right_shoulder = defaultPoseCoordinate;
-let topStar = new Star("topStar", width / 2, 120, () => {
+let topStar = new Star(width / 2, 120, () => {
     return topStar.isTouchingCoordinates(wristsMiddlePoint);
 }, undefined, true);
 let sidStarCoordinates = [220, 240];
-let pose1LeftStar = new Star("pose1LeftStar", sidStarCoordinates[0], sidStarCoordinates[1], () => {
+let pose1LeftStar = new Star(sidStarCoordinates[0], sidStarCoordinates[1], () => {
     return pose1LeftStar.isTouchingCoordinates(wristsMiddlePoint);
 }, undefined, true);
-let pose1RightStar = new Star("pose1RightStar", width - sidStarCoordinates[0], sidStarCoordinates[1], () => {
+let pose1RightStar = new Star(width - sidStarCoordinates[0], sidStarCoordinates[1], () => {
     return pose1RightStar.isTouchingCoordinates(wristsMiddlePoint);
 }, undefined, true);
 let angleMin = 150;
 let angleMax = 200;
-let pose1LeftElbowStar = new Star("pose1LeftElbowStar", left_elbow[0], left_elbow[1], () => {
+let pose1LeftElbowStar = new Star(left_elbow[0], left_elbow[1], () => {
     return left_arm_angle > angleMin && left_arm_angle < angleMax;
 }, () => {
     return left_elbow;
 });
-let pose1RightElbowStar = new Star("pose1RightElbowStar", right_elbow[0], right_elbow[1], () => {
+let pose1RightElbowStar = new Star(right_elbow[0], right_elbow[1], () => {
     return right_arm_angle > angleMin && right_arm_angle < angleMax;
 }, () => {
     return right_elbow;
 });
-let wristsMiddleStar = new Star("wristsMiddleStar", wristsMiddlePoint[0], wristsMiddlePoint[1], () => {
+let wristsMiddleStar = new Star(wristsMiddlePoint[0], wristsMiddlePoint[1], () => {
     return coordinatesTouching(left_wrist, right_wrist, [300, 200]);
 }, () => {
     return wristsMiddlePoint;

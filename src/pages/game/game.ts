@@ -1,5 +1,4 @@
 var path = require("path");
-var { Camera } = require("@mediapipe/camera_utils");
 var { drawConnectors, drawLandmarks } = require("@mediapipe/drawing_utils");
 var { Pose, POSE_CONNECTIONS, POSE_LANDMARKS } = require("@mediapipe/pose");
 var { ipcRenderer } = require("electron");
@@ -102,16 +101,15 @@ class Star {
 	public startActiveTime: number = NaN;
 	public previouslyActive: boolean = false;
 	constructor(
-		public name: string,
 		public x: number,
 		public y: number,
 		public functionToCheckActive: () => boolean = () => false,
 		public functionToCheckCoordinates: () => number[] = () => [x, y],
-		public hasPermenentlyActiveTimer: boolean = false,
+		public hasPermanentlyActiveTimer: boolean = false,
 		public active: boolean = false,
 		public color: string = "yellow",
-		public permenentlyActive: boolean = false,
-		public timeTotriggerPermanentlyActive: number = 10
+		public permanentlyActive: boolean = false,
+		public timeToTriggerPermanentlyActive: number = 10
 	) {
 		this.x = x;
 		this.y = y;
@@ -124,7 +122,7 @@ class Star {
 			this.x = x;
 			this.y = y;
 		}
-		drawStar(x, y, 30, this.permenentlyActive || this.active, this.color, 5);
+		drawStar(x, y, 30, this.permanentlyActive || this.active, this.color, 5);
 	}
 
 	isTouchingCoordinates(coordinates: number[], error: number[] = [50, 50]) {
@@ -136,14 +134,10 @@ class Star {
 		);
 	}
 
-	isTouchingPoseLandmark(landmarkId: number, error: number[] = [50, 50]) {
-		return this.isTouchingCoordinates(poseCoordinates[landmarkId], error);
-	}
-
 	runAll() {
 		[this.x, this.y] = this.functionToCheckCoordinates();
 		this.active = this.functionToCheckActive();
-		if (this.hasPermenentlyActiveTimer) {
+		if (this.hasPermanentlyActiveTimer) {
 			this.runPermanentlyActiveTimer();
 			if (this.active) {
 				this.drawTimer(this.activeTime);
@@ -166,22 +160,22 @@ class Star {
 		}
 		if (
 			this.previouslyActive &&
-			Date.now() / 1000 - this.startActiveTime > this.timeTotriggerPermanentlyActive
+			Date.now() / 1000 - this.startActiveTime > this.timeToTriggerPermanentlyActive
 		) {
-			this.permenentlyActive = true;
+			this.permanentlyActive = true;
 		}
 	}
 
 	drawTimer(time: number) {
-		if (!this.permenentlyActive) {
-			let timerWidth = 600;
+		if (!this.permanentlyActive) {
+			let timerWidth = 400;
 			let timerHeight = 40;
 			let timerX = 0;
 			let timerY = 0;
 			canvasCtx.fillStyle = "black";
 			canvasCtx.fillRect(timerX, timerY, timerWidth, timerHeight);
 
-			let timerProgress = time / this.timeTotriggerPermanentlyActive;
+			let timerProgress = time / this.timeToTriggerPermanentlyActive;
 			canvasCtx.fillStyle = "green";
 			canvasCtx.fillRect(timerX, timerY, timerProgress * timerWidth, timerHeight);
 		}
@@ -201,7 +195,6 @@ let left_shoulder = defaultPoseCoordinate;
 let right_shoulder = defaultPoseCoordinate;
 
 let topStar = new Star(
-	"topStar",
 	width / 2,
 	120,
 	() => {
@@ -214,7 +207,6 @@ let topStar = new Star(
 let sidStarCoordinates = [220, 240];
 
 let pose1LeftStar = new Star(
-	"pose1LeftStar",
 	sidStarCoordinates[0],
 	sidStarCoordinates[1],
 	() => {
@@ -225,7 +217,6 @@ let pose1LeftStar = new Star(
 ) as Star;
 
 let pose1RightStar = new Star(
-	"pose1RightStar",
 	width - sidStarCoordinates[0],
 	sidStarCoordinates[1],
 	() => {
@@ -239,7 +230,6 @@ let angleMin = 150;
 let angleMax = 200;
 
 let pose1LeftElbowStar = new Star(
-	"pose1LeftElbowStar",
 	left_elbow[0],
 	left_elbow[1],
 	() => {
@@ -251,7 +241,6 @@ let pose1LeftElbowStar = new Star(
 ) as Star;
 
 let pose1RightElbowStar = new Star(
-	"pose1RightElbowStar",
 	right_elbow[0],
 	right_elbow[1],
 	() => {
@@ -263,7 +252,6 @@ let pose1RightElbowStar = new Star(
 ) as Star;
 
 let wristsMiddleStar = new Star(
-	"wristsMiddleStar",
 	wristsMiddlePoint[0],
 	wristsMiddlePoint[1],
 	() => {
@@ -342,14 +330,6 @@ pose.setOptions({
 
 pose.onResults(onResults);
 
-// const camera = new Camera(videoElement, {
-// 	onFrame: async () => {
-// 		await pose.send({ image: videoElement });
-// 	},
-// 	width: width,
-// 	height: height,
-// });
-
 let stream: MediaStream | null = null;
 
 async function setupWebcam() {
@@ -384,22 +364,11 @@ function stopWebcam() {
 }
 
 ipcRenderer.on("start-web-game", () => {
-	// camera.start();
 	setupWebcam();
 	document.getElementById("listgamehidden")?.classList.remove("hidden");
 });
 
 ipcRenderer.on("stop-web-game", () => {
-	// camera.stop();
 	stopWebcam();
 	document.getElementById("listgamehidden")?.classList.add("hidden");
 });
-
-// function startGameFromGamePage() {
-// 	// loadPage("home");
-// 	ipcRenderer.send("start-game", true);
-// 	// camera.stop();
-// 	// camera.start();
-// 	// startGame();
-// 	document.getElementById("w-start-container")!.classList.add("hidden");
-// }
