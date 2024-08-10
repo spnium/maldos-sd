@@ -4,6 +4,7 @@ import Store from "electron-store";
 import { execSync, exec } from "child_process";
 import { UDPSocket } from "socket-udp";
 import { spawn } from "node:child_process";
+import { Stream } from "node:stream";
 
 const socket = new UDPSocket({ port: 6969 } as any);
 
@@ -46,6 +47,11 @@ if (!TIMELIMIT) {
 	store.set("time_limit", TIMELIMIT);
 }
 let soundLevel = 60;
+
+ipcMain.on("update-sound-level", (event, arg) => {
+	soundLevel = arg;
+});
+
 let temperature = getTemperature();
 let lightLevel = getLight();
 
@@ -120,8 +126,7 @@ const createWindow = () => {
 
 	function startGame() {
 		sendToRenderer("load-page", "game");
-		// spawn("python", ["/Users/maytanan/Desktop/maldos/src/game/maldos_client.py"]);
-		// exec("python /Users/maytanan/Desktop/maldos/src/game/maldos_client.py");
+		sendToRenderer("start-web-game", true);
 	}
 
 	const sendToRenderer = (event: string, arg: any) => {
@@ -134,9 +139,9 @@ const createWindow = () => {
 		win!.center();
 		startTimer();
 		let envInterval = new Interval(async () => {
-			soundLevel = await getSound();
 			temperature = getTemperature();
 			lightLevel = getLight();
+			getSound();
 			sendToRenderer("update-env", [temperature, lightLevel, soundLevel]);
 		}, 2000);
 		envInterval.run();
@@ -149,9 +154,9 @@ const createWindow = () => {
 				startTimer();
 				break;
 			case "game":
-				win!.setSize(1280, 720, true);
+				win!.setSize(1280, 720, false);
 				win!.center();
-				sendToRenderer("start-web-game", true);
+			// sendToRenderer("start-web-game", true);
 			case "settings":
 				sendToRenderer("render-settings", (timeLimit - 1) / 60);
 				break;
@@ -168,6 +173,9 @@ const createWindow = () => {
 			win!.setSize(1080, 720, true);
 			sendToRenderer("stop-web-game", true);
 		}
+		setTimeout(() => {
+			win!.center();
+		}, 50);
 	});
 
 	ipcMain.on("quit", () => {
@@ -256,13 +264,14 @@ function getLight(): number {
 
 async function getSound(): Promise<number> {
 	return new Promise((resolve) => {
-		// exec(
-		// 	"python /Users/maytanan/Desktop/maldos/src/sound_sensor/sound.py",
-		// 	(err: any, stdout: any, stderr: any) => {
-		// 		resolve(+stdout.toString().replace(/\D/g, ""));
-		// 	}
-		// );
-		resolve(52);
+		exec(
+			"python /Users/maytanan/Desktop/maldos/src/sound_sensor/sound.py",
+			(err: any, stdout: any, stderr: any) => {
+				resolve(+stdout.toString().replace(/\D/g, ""));
+				soundLevel = +stdout.toString().replace(/\D/g, "");
+			}
+		);
+		// resolve(52);
 	});
 }
 

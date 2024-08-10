@@ -136,13 +136,15 @@ let leftStar = new Star("leftStar", sidStarCoordinates[0], sidStarCoordinates[1]
 let rightStar = new Star("rightStar", width - sidStarCoordinates[0], sidStarCoordinates[1], () => {
     return rightStar.isTouchingCoordinates(wristsMiddlePoint);
 });
+let angleMin = 150;
+let angleMax = 200;
 let leftElbowStar = new Star("leftElbowStar", left_elbow[0], left_elbow[1], () => {
-    return left_arm_angle > 160 && left_arm_angle < 200;
+    return left_arm_angle > angleMin && left_arm_angle < angleMax;
 }, () => {
     return left_elbow;
 });
 let rightElbowStar = new Star("rightElbowStar", right_elbow[0], right_elbow[1], () => {
-    return right_arm_angle > 160 && right_arm_angle < 200;
+    return right_arm_angle > angleMin && right_arm_angle < angleMax;
 }, () => {
     return right_elbow;
 });
@@ -205,8 +207,20 @@ const camera = new Camera(videoElement, {
     height: height,
 });
 ipcRenderer.on("start-web-game", () => {
+    var _a;
     camera.start();
+    (_a = document.getElementById("listgamehidden")) === null || _a === void 0 ? void 0 : _a.classList.remove("hidden");
 });
 ipcRenderer.on("stop-web-game", () => {
+    var _a;
     camera.stop();
+    (_a = document.getElementById("listgamehidden")) === null || _a === void 0 ? void 0 : _a.classList.add("hidden");
 });
+// function startGameFromGamePage() {
+// 	// loadPage("home");
+// 	ipcRenderer.send("start-game", true);
+// 	// camera.stop();
+// 	// camera.start();
+// 	// startGame();
+// 	document.getElementById("w-start-container")!.classList.add("hidden");
+// }

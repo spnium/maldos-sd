@@ -278,8 +278,19 @@ const camera = new Camera(videoElement, {
 
 ipcRenderer.on("start-web-game", () => {
 	camera.start();
+	document.getElementById("listgamehidden")?.classList.remove("hidden");
 });
 
 ipcRenderer.on("stop-web-game", () => {
 	camera.stop();
+	document.getElementById("listgamehidden")?.classList.add("hidden");
 });
+
+// function startGameFromGamePage() {
+// 	// loadPage("home");
+// 	ipcRenderer.send("start-game", true);
+// 	// camera.stop();
+// 	// camera.start();
+// 	// startGame();
+// 	document.getElementById("w-start-container")!.classList.add("hidden");
+// }

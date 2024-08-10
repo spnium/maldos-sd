@@ -143,7 +143,7 @@ const showLoading = function () {
         title: "loading",
         allowEscapeKey: false,
         allowOutsideClick: false,
-        timer: 2000,
+        timer: 3300,
     });
     Swal.showLoading();
 };

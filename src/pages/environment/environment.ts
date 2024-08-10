@@ -32,3 +32,21 @@ ipcRenderer.on("update-env", (_event, arg) => {
 	document.getElementById("light")!.innerHTML = `<span>Light : ${arg[1]} lx</span>`;
 	document.getElementById("sound")!.innerHTML = `<span>Sound : ${arg[2]} dB</span>`;
 });
+
+// // @ts-ignore
+// var DecibelMeter = require("decibel-meter");
+// let meter = new DecibelMeter("123412341234");
+// // meter.listenTo(1, (dB: number, percent: number, value: number) => {
+// // 	console.log(dB);
+// // 	ipcRenderer.send("update-sound-level", dB);
+// // });
+// meter.connectTo("default");
+// meter.on("sample", (dB: number, percent: number, value: number) => {
+// 	setTimeout(() => {
+// 		dB += 140;
+// 		let output = parseInt(dB.toString());
+// 		ipcRenderer.send("update-sound-level", output);
+// 		console.log(output);
+// 	}, 1000);
+// });
+// meter.listen();

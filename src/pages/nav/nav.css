@@ -1,5 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap");
 
+html, body {margin: 0; height: 100%; overflow: hidden}
+
 * {
     margin: 0;
     padding: 0;
@@ -28,6 +30,10 @@ nav .sidebar {
     padding: 20px 0;
     background-color: #fff;
     box-shadow: 0 5px 1px rgba(0, 0, 0, 0.1);
+}
+
+li.hidden {
+    display: none;
 }
 
 .sidebar .sidebar-content {

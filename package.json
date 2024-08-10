@@ -48,6 +48,7 @@
 		"@mediapipe/pose": "^0.5.1675469404",
 		"@techstark/opencv-js": "^4.9.0-release.3",
 		"child_process": "^1.0.2",
+		"decibel-meter": "^2.0.0",
 		"electron-squirrel-startup": "^1.0.1",
 		"electron-store": "^8.2.0",
 		"jpickle": "^0.4.1",

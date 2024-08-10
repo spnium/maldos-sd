@@ -64,6 +64,9 @@ if (!TIMELIMIT) {
     store.set("time_limit", TIMELIMIT);
 }
 let soundLevel = 60;
+electron_1.ipcMain.on("update-sound-level", (event, arg) => {
+    soundLevel = arg;
+});
 let temperature = getTemperature();
 let lightLevel = getLight();
 let SNOOZELIMIT = 601;
@@ -130,8 +133,7 @@ const createWindow = () => {
     };
     function startGame() {
         sendToRenderer("load-page", "game");
-        // spawn("python", ["/Users/maytanan/Desktop/maldos/src/game/maldos_client.py"]);
-        // exec("python /Users/maytanan/Desktop/maldos/src/game/maldos_client.py");
+        sendToRenderer("start-web-game", true);
     }
     const sendToRenderer = (event, arg) => {
         if (win) {
@@ -142,9 +144,9 @@ const createWindow = () => {
         win.center();
         startTimer();
         let envInterval = new Interval(async () => {
-            soundLevel = await getSound();
             temperature = getTemperature();
             lightLevel = getLight();
+            getSound();
             sendToRenderer("update-env", [temperature, lightLevel, soundLevel]);
         }, 2000);
         envInterval.run();
@@ -156,9 +158,9 @@ const createWindow = () => {
                 startTimer();
                 break;
             case "game":
-                win.setSize(1280, 720, true);
+                win.setSize(1280, 720, false);
                 win.center();
-                sendToRenderer("start-web-game", true);
+            // sendToRenderer("start-web-game", true);
             case "settings":
                 sendToRenderer("render-settings", (timeLimit - 1) / 60);
                 break;
@@ -175,6 +177,9 @@ const createWindow = () => {
             win.setSize(1080, 720, true);
             sendToRenderer("stop-web-game", true);
         }
+        setTimeout(() => {
+            win.center();
+        }, 50);
     });
     electron_1.ipcMain.on("quit", () => {
         electron_1.app.quit();
@@ -247,13 +252,11 @@ function getLight() {
 }
 async function getSound() {
     return new Promise((resolve) => {
-        // exec(
-        // 	"python /Users/maytanan/Desktop/maldos/src/sound_sensor/sound.py",
-        // 	(err: any, stdout: any, stderr: any) => {
-        // 		resolve(+stdout.toString().replace(/\D/g, ""));
-        // 	}
-        // );
-        resolve(52);
+        (0, child_process_1.exec)("python /Users/maytanan/Desktop/maldos/src/sound_sensor/sound.py", (err, stdout, stderr) => {
+            resolve(+stdout.toString().replace(/\D/g, ""));
+            soundLevel = +stdout.toString().replace(/\D/g, "");
+        });
+        // resolve(52);
     });
 }
 console.log("Temperature:" + getTemperature());
