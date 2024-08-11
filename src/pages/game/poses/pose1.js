@@ -1,4 +1,4 @@
-var { setCanvasCtx, Star, poseLMS, calculate_angle, coordinatesTouching, width, height } = require("../../pages/game/utils.js");
+var { setCanvasCtx, Star, poseLMS, calculate_angle, coordinatesTouching, width, height } = require("../utils.js");
 
 let poseCoordinates = [];
 for (let i = 0; i < 33; i++) {

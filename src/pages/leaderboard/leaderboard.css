@@ -7,6 +7,10 @@ body {
 	margin-left: 260px;
 }
 
+.leaderboard-container html {
+	overflow: scroll !important;
+}
+
 .container > header {
 	/* margin: 0 auto;
 	padding: 1em; */

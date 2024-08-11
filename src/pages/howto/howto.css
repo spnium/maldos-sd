@@ -1,9 +1,20 @@
+@import url("https://fonts.googleapis.com/css2?family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
 .howto {
-    margin-left: 300px; /* 260 + 40 */
-    margin-top: 40px;
+	font-family: "Prompt", sans-serif;
+	margin-left: 260px;
+	margin-top: 40px;
+	text-align: center;
 }
 
-.howto video {
-    width: 720px;
-    height: 480px;
+.howto.pose-howto {
+    margin: 10px;
+}
+
+.howto p {
+    margin: 20px;
+}
+
+.howto h1 {
+    margin-bottom: 20px;
 }
