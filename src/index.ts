@@ -47,6 +47,27 @@ let timerInterval: any = null;
 
 let alreadyPlayedGame = false;
 
+const createLoginWindow = () => {
+	let loginWin = new BrowserWindow({
+		width: 1080,
+		height: 720,
+		icon: path.join(__dirname, "/pages/assets/maldos.ico"),
+		resizable: false,
+		webPreferences: {
+			contextIsolation: false,
+			nodeIntegration: true,
+			preload: path.join(__dirname, "preload.js"),
+		},
+	});
+
+	loginWin.loadFile(path.join(__dirname, "/pages/login_page/login.html"));
+
+	ipcMain.on("finish-login", () => {
+		loginWin.close();
+		createWindow();
+	});
+};
+
 const createWindow = () => {
 	win = new BrowserWindow({
 		width: 1080,
@@ -60,10 +81,14 @@ const createWindow = () => {
 		},
 	});
 
+	setTimeout(() => {
+		showTimesUpNotification();
+	}, 6000);
+
 	win.loadFile(path.join(__dirname, "/pages/main_page/main.html"));
 	// win.loadFile(path.join(__dirname, "/pages/login_page/login.html"));
 
-	win.webContents.openDevTools({ mode: "detach" });
+	// win.webContents.openDevTools({ mode: "detach" });
 
 	win.on("closed", () => {
 		win = null;
@@ -183,7 +208,8 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
-	createWindow();
+	// createWindow();
+	createLoginWindow();
 
 	app.on("activate", () => {
 		if (BrowserWindow.getAllWindows().length === 0) {
@@ -248,13 +274,13 @@ function getLight(): number {
 
 async function getSound(): Promise<number> {
 	return new Promise((resolve) => {
-		exec(
-			"python /Users/maytanan/Desktop/maldos/src/sound_sensor/sound.py",
-			(err: any, stdout: any, stderr: any) => {
-				resolve(+stdout.toString().replace(/\D/g, ""));
-				soundLevel = +stdout.toString().replace(/\D/g, "");
-			}
-		);
-		// resolve(52);
+		// exec(
+		// 	"python /Users/maytanan/Desktop/maldos/src/sound_sensor/sound.py",
+		// 	(err: any, stdout: any, stderr: any) => {
+		// 		resolve(+stdout.toString().replace(/\D/g, ""));
+		// 		soundLevel = +stdout.toString().replace(/\D/g, "");
+		// 	}
+		// );
+		resolve(59);
 	});
 }

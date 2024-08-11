@@ -12,3 +12,10 @@ input[type="number"]
 {
     font-size:28px;
 }
+
+.settings button {
+    margin-top: 10px;
+    font-size: 18px;
+    display: block;
+    padding: 10px;
+}

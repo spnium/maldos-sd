@@ -173,7 +173,7 @@ class Star {
 
     drawTimer(time) {
         if (!this.permanentlyActive) {
-            let timerWidth = 400;
+            let timerWidth = 260;
             let timerHeight = 40;
             let timerX = 0;
             let timerY = 0;

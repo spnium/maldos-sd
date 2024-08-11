@@ -37,7 +37,7 @@ function right_arm_angle() {
 }
 
 
-let leftElbowStar = new Star(
+let lLeftElbowStar = new Star(
     poseCoordinates[poseLMS.LEFT_ELBOW][0],
     poseCoordinates[poseLMS.LEFT_ELBOW][1],
     () => {
@@ -48,7 +48,7 @@ let leftElbowStar = new Star(
     }
 );
 
-let rightElbowStar = new Star(
+let rRightElbowStar = new Star(
     poseCoordinates[poseLMS.RIGHT_ELBOW][0],
     poseCoordinates[poseLMS.RIGHT_ELBOW][1],
     () => {
@@ -59,14 +59,77 @@ let rightElbowStar = new Star(
     }
 );
 
+let rLeftElbowStar = new Star(
+    poseCoordinates[poseLMS.LEFT_ELBOW][0],
+    poseCoordinates[poseLMS.LEFT_ELBOW][1],
+    () => {
+        // return left_arm_angle() < 65 && left_arm_angle() > 35;
+        return rRightHandStar.active
+    },
+    () => {
+        return poseCoordinates[poseLMS.LEFT_ELBOW];
+    }
+);
 
-let pose4stars = [
-    leftElbowStar,
-    rightElbowStar
+let lRightElbowStar = new Star(
+    poseCoordinates[poseLMS.RIGHT_ELBOW][0],
+    poseCoordinates[poseLMS.RIGHT_ELBOW][1],
+    () => {
+        // return right_arm_angle() < 65 && right_arm_angle() > 35;
+        return lLeftHandStar.active
+    },
+    () => {
+        return poseCoordinates[poseLMS.RIGHT_ELBOW];
+    }
+);
+
+let lLeftHandStar = new Star(
+    poseCoordinates[poseLMS.LEFT_PINKY][0],
+    poseCoordinates[poseLMS.LEFT_PINKY][1],
+    () => {
+        return coordinatesTouching(
+            poseCoordinates[poseLMS.LEFT_PINKY],
+            poseCoordinates[poseLMS.RIGHT_ELBOW],
+            [100, 100]
+        );
+    },
+    () => {
+        return poseCoordinates[poseLMS.LEFT_PINKY];
+    },
+    true
+);
+
+let rRightHandStar = new Star(
+    poseCoordinates[poseLMS.RIGHT_INDEX][0],
+    poseCoordinates[poseLMS.RIGHT_INDEX][1],
+    () => {
+        return coordinatesTouching(
+            poseCoordinates[poseLMS.RIGHT_PINKY],
+            poseCoordinates[poseLMS.LEFT_ELBOW],
+            [100, 100]
+        );
+    },
+    () => {
+        return poseCoordinates[poseLMS.RIGHT_PINKY];
+    },
+    true
+);
+
+let pose4Lstars = [
+    lLeftHandStar,
+    lLeftElbowStar,
+    lRightElbowStar,
+];
+
+let pose4Rstars = [
+    rRightHandStar,
+    rRightElbowStar,
+    rLeftElbowStar,
 ];
 
 module.exports = {
     setpose4Coordinates,
     setpose4CanvasCtx,
-    pose4stars
+    pose4Lstars,
+    pose4Rstars
 };

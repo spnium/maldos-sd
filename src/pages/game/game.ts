@@ -26,8 +26,8 @@ pose.setOptions({
 	modelComplexity: 1,
 	smoothLandmarks: true,
 	enableSegmentation: false,
-	minDetectionConfidence: 0.35,
-	minTrackingConfidence: 0.35,
+	minDetectionConfidence: 0.25,
+	minTrackingConfidence: 0.25,
 });
 
 pose.onResults(onResults);
@@ -48,9 +48,11 @@ async function startWebcam() {
 	} catch (error) {
 		console.error("Error accessing webcam:", error);
 	}
+	setCanvasCtx(canvasCtx);
 }
 
 const runFrame = async () => {
+	setCanvasCtx(canvasCtx);
 	await pose.send({ image: videoElement });
 	videoElement.requestVideoFrameCallback(runFrame);
 };
@@ -66,6 +68,7 @@ function stopWebcam() {
 }
 
 ipcRenderer.on("start-web-game", () => {
+	setCanvasCtx(canvasCtx);
 	startWebcam();
 	document.getElementById("listgamehidden")?.classList.remove("hidden");
 });

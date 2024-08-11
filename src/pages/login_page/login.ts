@@ -2,6 +2,8 @@ const forms = document.querySelector(".forms");
 const pwShowHide = document.querySelectorAll(".eye-icon");
 const links = document.querySelectorAll(".link");
 
+var { ipcRenderer } = require("electron");
+
 pwShowHide.forEach((eyeIcon) => {
 	eyeIcon.addEventListener("click", () => {
 		let pwFields = eyeIcon.parentElement!.parentElement!.querySelectorAll(".password");
@@ -24,3 +26,8 @@ links.forEach((link) => {
 		forms!.classList.toggle("show-signup");
 	});
 });
+
+function signup() {
+	window.close();
+	ipcRenderer.send("finish-login", true);
+}

@@ -42,6 +42,24 @@ let timeLimit = TIMELIMIT;
 let timeLeft = timeLimit;
 let timerInterval = null;
 let alreadyPlayedGame = false;
+const createLoginWindow = () => {
+    let loginWin = new electron_1.BrowserWindow({
+        width: 1080,
+        height: 720,
+        icon: node_path_1.default.join(__dirname, "/pages/assets/maldos.ico"),
+        resizable: false,
+        webPreferences: {
+            contextIsolation: false,
+            nodeIntegration: true,
+            preload: node_path_1.default.join(__dirname, "preload.js"),
+        },
+    });
+    loginWin.loadFile(node_path_1.default.join(__dirname, "/pages/login_page/login.html"));
+    electron_1.ipcMain.on("finish-login", () => {
+        loginWin.close();
+        createWindow();
+    });
+};
 const createWindow = () => {
     win = new electron_1.BrowserWindow({
         width: 1080,
@@ -54,9 +72,12 @@ const createWindow = () => {
             preload: node_path_1.default.join(__dirname, "preload.js"),
         },
     });
+    setTimeout(() => {
+        showTimesUpNotification();
+    }, 6000);
     win.loadFile(node_path_1.default.join(__dirname, "/pages/main_page/main.html"));
     // win.loadFile(path.join(__dirname, "/pages/login_page/login.html"));
-    win.webContents.openDevTools({ mode: "detach" });
+    // win.webContents.openDevTools({ mode: "detach" });
     win.on("closed", () => {
         win = null;
     });
@@ -166,7 +187,8 @@ const createWindow = () => {
     });
 };
 electron_1.app.whenReady().then(() => {
-    createWindow();
+    // createWindow();
+    createLoginWindow();
     electron_1.app.on("activate", () => {
         if (electron_1.BrowserWindow.getAllWindows().length === 0) {
             createWindow();
@@ -220,10 +242,13 @@ function getLight() {
 }
 async function getSound() {
     return new Promise((resolve) => {
-        (0, child_process_1.exec)("python /Users/maytanan/Desktop/maldos/src/sound_sensor/sound.py", (err, stdout, stderr) => {
-            resolve(+stdout.toString().replace(/\D/g, ""));
-            soundLevel = +stdout.toString().replace(/\D/g, "");
-        });
-        // resolve(52);
+        // exec(
+        // 	"python /Users/maytanan/Desktop/maldos/src/sound_sensor/sound.py",
+        // 	(err: any, stdout: any, stderr: any) => {
+        // 		resolve(+stdout.toString().replace(/\D/g, ""));
+        // 		soundLevel = +stdout.toString().replace(/\D/g, "");
+        // 	}
+        // );
+        resolve(59);
     });
 }
