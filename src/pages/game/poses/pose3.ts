@@ -1,4 +1,4 @@
-var {
+import {
 	setCanvasCtx,
 	Star,
 	poseLMS,
@@ -6,14 +6,14 @@ var {
 	coordinatesTouching,
 	width,
 	height,
-} = require("../utils.js");
+} from "../utils";
 
-let poseCoordinates = [];
+let poseCoordinates: number[][] = [];
 for (let i = 0; i < 33; i++) {
 	poseCoordinates[i] = [-1000, -1000];
 }
 
-function setposeCoordinates(coordinates: number[]) {
+function setposeCoordinates(coordinates: number[][]) {
 	poseCoordinates = coordinates;
 }
 
@@ -21,8 +21,65 @@ function setposeCanvasCtx(ctx: CanvasRenderingContext2D) {
 	setCanvasCtx(ctx);
 }
 
-let poseRStars: (typeof Star)[] = [];
-let poseLStars: (typeof Star)[] = [];
+function shoulders_midpoint() {
+	return [
+		(poseCoordinates[poseLMS.LEFT_ELBOW][0] + poseCoordinates[poseLMS.RIGHT_ELBOW][0]) / 2,
+		(poseCoordinates[poseLMS.LEFT_ELBOW][1] + poseCoordinates[poseLMS.RIGHT_ELBOW][1]) / 2,
+	];
+}
+
+function eyes_midpoint() {
+	return [
+		(poseCoordinates[poseLMS.LEFT_EYE_OUTER][0] + poseCoordinates[poseLMS.RIGHT_EYE_OUTER][0]) /
+			2,
+		(poseCoordinates[poseLMS.LEFT_EYE_OUTER][1] + poseCoordinates[poseLMS.RIGHT_EYE_OUTER][1]) /
+			2,
+	];
+}
+
+// let top_of_head = () => {
+// 	// let r = eyes_midpoint()[0];
+// 	// return [eyes_midpoint()[0], eyes_midpoint()[1] - 0.3 * r];
+
+// };
+
+function eyes_to_shoulder_angle() {
+	return calculate_angle(eyes_midpoint(), shoulders_midpoint(), [eyes_midpoint()[0], 2000]);
+}
+
+function left_arm_angle() {
+	return calculate_angle(
+		poseCoordinates[poseLMS.LEFT_WRIST],
+		poseCoordinates[poseLMS.LEFT_ELBOW],
+		poseCoordinates[poseLMS.LEFT_SHOULDER]
+	);
+}
+
+function right_arm_angle() {
+	return calculate_angle(
+		poseCoordinates[poseLMS.RIGHT_WRIST],
+		poseCoordinates[poseLMS.RIGHT_ELBOW],
+		poseCoordinates[poseLMS.RIGHT_SHOULDER]
+	);
+}
+
+let lHandStar = new Star(
+	poseCoordinates[poseLMS.LEFT_INDEX][0],
+	poseCoordinates[poseLMS.LEFT_INDEX][1],
+	() => {
+		return coordinatesTouching(
+			poseCoordinates[poseLMS.LEFT_PINKY],
+			eyes_midpoint(),
+			[200, 200]
+		);
+	},
+	() => {
+		return poseCoordinates[poseLMS.LEFT_INDEX];
+	}
+);
+
+let poseRStars: Star[] = [];
+let poseLStars: Star[] = [];
 
 module.exports = {
 	setposeCoordinates,
@@ -30,3 +87,5 @@ module.exports = {
 	poseRStars,
 	poseLStars,
 };
+
+export { setposeCoordinates, setposeCanvasCtx, poseRStars, poseLStars };

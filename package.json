@@ -34,7 +34,7 @@
 		"electron-store": "^8.2.0",
 		"jquery": "^3.7.1",
 		"ts-node": "^10.9.2",
-		"typescript": "^5.5.3"
+		"typescript": "^5.5.4"
 	},
 	"keywords": [],
 	"author": {

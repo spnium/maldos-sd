@@ -1,11 +1,10 @@
-var { drawConnectors, drawLandmarks } = require("@mediapipe/drawing_utils");
-var { POSE_CONNECTIONS } = require("@mediapipe/pose");
-var { Star } = require("../../pages/game/utils");
+import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
+import { POSE_CONNECTIONS } from "@mediapipe/pose";
+import { Star, width, height } from "../../pages/game/utils";
 
-var { width, height } = require("../../pages/game/utils");
-var Pose1 = require("../../pages/game/poses/pose1");
-var Pose2 = require("../../pages/game/poses/pose2");
-var Pose3 = require("../../pages/game/poses/pose3");
+import * as Pose1 from "../../pages/game/poses/pose1";
+import * as Pose2 from "../../pages/game/poses/pose2";
+import * as Pose3 from "../../pages/game/poses/pose3";
 
 let pose1 = {
 	starsArray: [Pose1.poseStars],
@@ -27,12 +26,12 @@ let pose3 = {
 
 let poses = [pose1, pose2, pose3];
 
-let poseStars: (typeof Star)[] = [];
+let poseStars: Star[] = [];
 let setPoseCanvasCtxs: ((ctx: CanvasRenderingContext2D) => void)[] = [];
 let setPosePoseCoordinates: ((coordinates: number[][]) => void)[] = [];
 
 poses.forEach((pose) => {
-	pose.starsArray.forEach((starArray) => {
+	pose.starsArray.forEach((starArray: any) => {
 		poseStars.push(starArray);
 	});
 	setPoseCanvasCtxs.push(pose.setCanvasCtx);
@@ -75,28 +74,28 @@ let timeLimit = 301;
 let timeLeft = timeLimit;
 let timeStr = formatTime(timeLeft);
 
-// let poseIDs = {
-//     pose1: 0,
-//     pose2right: 1,
-//     pose2left: 2,
-//     pose3right: 3,
-//     pose3left: 4,
-//     pose4left: 5,
-//     pose4right: 6,
-//     pose5left: 7,
-//     pose5right: 8,
-//     pose6left: 9,
-//     pose6right: 10
-// };
-
 let poseNum = 0;
 
-function drawPoseName(name: string) {
+let poseNames = [
+	"ท่าที่ 1",
+	"ท่าที่ 2 - ด้านขวา",
+	"ท่าที่ 2 - ด้านซ้าย",
+	"ท่าที่ 3 - ด้านขวา",
+	"ท่าที่ 3 - ด้านซ้าย",
+	"ท่าที่ 4 - ด้านซ้าย",
+	"ท่าที่ 4 - ด้านขวา",
+	"ท่าที่ 5 - ด้านซ้าย",
+	"ท่าที่ 5 - ด้านขวา",
+	"ท่าที่ 6 - ด้านซ้าย",
+	"ท่าที่ 6 - ด้านขวา",
+];
+
+function drawPoseName(nameNum: number) {
 	canvasCtx.font = "50px Arial";
 	canvasCtx.textAlign = "center";
 	canvasCtx.textBaseline = "top";
 	canvasCtx.fillStyle = "black";
-	canvasCtx.fillText(name, width / 2 - 50, 0);
+	canvasCtx.fillText(poseNames[nameNum], width / 2 - 50, 0);
 }
 
 function runGameFrame(results: any) {
@@ -140,8 +139,8 @@ function runGameFrame(results: any) {
 	poseNum = 0;
 	for (let i = 0; i < poseStars.length; i++) {
 		if (
-			poseStars[i].every(
-				(star: typeof Star) => star.permanentlyActive || !star.hasPermanentlyActiveTimer
+			(poseStars[i] as any).every(
+				(star: Star) => star.permanentlyActive || !star.hasPermanentlyActiveTimer
 			)
 		) {
 			poseNum += 1;
@@ -150,13 +149,9 @@ function runGameFrame(results: any) {
 		}
 	}
 
-	if (poseNum !== 0) {
-		drawPoseName(`ท่าที่ ${poseNum + 1} - ${(poseNum + 1) % 2 === 0 ? "ด้านขวา" : "ด้านซ้าย"}`);
-	} else {
-		drawPoseName("ท่าที่ 1");
-	}
+	drawPoseName(poseNum);
 
-	poseStars[poseNum].forEach((star: typeof Star) => {
+	(poseStars[poseNum] as any).forEach((star: Star) => {
 		star.runAll();
 	});
 

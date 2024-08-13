@@ -1,4 +1,4 @@
-var {
+import {
 	setCanvasCtx,
 	Star,
 	poseLMS,
@@ -6,7 +6,7 @@ var {
 	coordinatesTouching,
 	width,
 	height,
-} = require("../utils.js");
+} from "../utils";
 
 let poseCoordinates: number[][] = [];
 for (let i = 0; i < 33; i++) {
@@ -52,7 +52,7 @@ let topStar = new Star(
 	},
 	undefined,
 	true
-);
+) as Star;
 
 let sideStarCoordinates = [220, 240];
 
@@ -64,7 +64,7 @@ let pose1LeftStar = new Star(
 	},
 	undefined,
 	true
-);
+) as Star;
 
 let pose1RightStar = new Star(
 	width - sideStarCoordinates[0],
@@ -74,7 +74,7 @@ let pose1RightStar = new Star(
 	},
 	undefined,
 	true
-);
+) as Star;
 
 let angleMin = 150;
 let angleMax = 200;
@@ -130,3 +130,5 @@ module.exports = {
 	setposeCanvasCtx,
 	poseStars,
 };
+
+export { setposeCoordinates, setposeCanvasCtx, poseStars };

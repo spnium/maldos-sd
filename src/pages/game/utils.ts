@@ -1,4 +1,4 @@
-var { POSE_LANDMARKS } = require("@mediapipe/pose");
+import { POSE_LANDMARKS } from "@mediapipe/pose";
 
 let canvasCtx: CanvasRenderingContext2D;
 let poseCoordinates = [];
@@ -208,3 +208,5 @@ module.exports = {
 	width,
 	height,
 };
+
+export { setCanvasCtx, Star, poseLMS, calculate_angle, coordinatesTouching, width, height };

@@ -1,4 +1,4 @@
-var {
+import {
 	setCanvasCtx,
 	Star,
 	poseLMS,
@@ -6,7 +6,7 @@ var {
 	coordinatesTouching,
 	width,
 	height,
-} = require("../utils.js");
+} from "../utils";
 
 let poseCoordinates: number[][] = [];
 for (let i = 0; i < 33; i++) {
@@ -130,3 +130,5 @@ module.exports = {
 	poseLstars,
 	poseRstars,
 };
+
+export { setposeCoordinates, setposeCanvasCtx, poseLstars, poseRstars };
