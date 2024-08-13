@@ -81,12 +81,7 @@ const createWindow = () => {
 		},
 	});
 
-	setTimeout(() => {
-		showTimesUpNotification();
-	}, 6000);
-
 	win.loadFile(path.join(__dirname, "/pages/main_page/main.html"));
-	// win.loadFile(path.join(__dirname, "/pages/login_page/login.html"));
 
 	win.webContents.openDevTools({ mode: "detach" });
 

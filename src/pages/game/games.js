@@ -1,72 +1,67 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var { drawConnectors, drawLandmarks } = require("@mediapipe/drawing_utils");
 var { POSE_CONNECTIONS } = require("@mediapipe/pose");
-
+var { Star } = require("../../pages/game/utils");
 var { width, height } = require("../../pages/game/utils");
 var Pose1 = require("../../pages/game/poses/pose1");
 var Pose2 = require("../../pages/game/poses/pose2");
-
+var Pose3 = require("../../pages/game/poses/pose3");
 let pose1 = {
     starsArray: [Pose1.poseStars],
     setCoordinates: Pose1.setposeCoordinates,
-    setCanvasCtx: Pose1.setposeCanvasCtx
+    setCanvasCtx: Pose1.setposeCanvasCtx,
 };
-
 let pose2 = {
-    starsArray: [Pose2.poseRstars, Pose2.poseRstars],
+    starsArray: [Pose2.poseRstars, Pose2.poseLstars],
     setCoordinates: Pose2.setposeCoordinates,
-    setCanvasCtx: Pose2.setposeCanvasCtx
+    setCanvasCtx: Pose2.setposeCanvasCtx,
 };
-
-let poses = [pose1, pose2];
-
+let pose3 = {
+    starsArray: [Pose3.poseRStars, Pose3.poseLStars],
+    setCoordinates: Pose3.setposeCoordinates,
+    setCanvasCtx: Pose3.setposeCanvasCtx,
+};
+let poses = [pose1, pose2, pose3];
 let poseStars = [];
 let setPoseCanvasCtxs = [];
 let setPosePoseCoordinates = [];
-
-poses.forEach(pose => {
-    pose.starsArray.forEach(star => {
-        poseStars.push(star);
+poses.forEach((pose) => {
+    pose.starsArray.forEach((starArray) => {
+        poseStars.push(starArray);
     });
     setPoseCanvasCtxs.push(pose.setCanvasCtx);
     setPosePoseCoordinates.push(pose.setCoordinates);
 });
-
 let canvasCtx;
 let poseCoordinates = [];
 for (let i = 0; i < 33; i++) {
     poseCoordinates[i] = [0, 0];
 }
-
 function setCanvasCtx(ctx) {
     canvasCtx = ctx;
-    setPoseCanvasCtxs.forEach(setPoseCanvasCtx => {
+    setPoseCanvasCtxs.forEach((setPoseCanvasCtx) => {
         setPoseCanvasCtx(ctx);
-    })
+    });
 }
-
 function formatTime(time) {
     if (time === 0) {
         return "00:00:00";
     }
-
     let minutes = Math.floor(time / 60);
     let seconds = Math.floor((time % 3600) % 60);
-
     if (minutes < 10) {
         minutes = `0${minutes}`;
     }
     if (seconds < 10) {
         seconds = `0${seconds}`;
     }
-
     return `${minutes}:${seconds}`;
 }
-
 let startTime = -1000;
 let timeLimit = 301;
 let timeLeft = timeLimit;
 let timeStr = formatTime(timeLeft);
-
 // let poseIDs = {
 //     pose1: 0,
 //     pose2right: 1,
@@ -80,86 +75,70 @@ let timeStr = formatTime(timeLeft);
 //     pose6left: 9,
 //     pose6right: 10
 // };
-
 let poseNum = 0;
-
 function drawPoseName(name) {
     canvasCtx.font = "50px Arial";
     canvasCtx.textAlign = "center";
-    canvasCtx.textBaseLine = "top";
+    canvasCtx.textBaseline = "top";
     canvasCtx.fillStyle = "black";
-    canvasCtx.fillText(name, width / 2 - 50, 50);
+    canvasCtx.fillText(name, width / 2 - 50, 0);
 }
-
 function runGameFrame(results) {
     if (startTime == -1000) {
         startTime = Date.now();
     }
-
-    timeLeft = parseInt(timeLimit - (Date.now() - startTime) / 1000);
-
+    timeLeft = parseInt(`${timeLimit - (Date.now() - startTime) / 1000}`);
     timeStr = formatTime(timeLeft);
-
-    canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
-
-    canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
-
+    canvasCtx.clearRect(0, 0, width, height);
+    canvasCtx.drawImage(results.image, 0, 0, width, height);
     canvasCtx.font = "50px Arial";
     canvasCtx.textAlign = "end";
-    canvasCtx.textBaseLine = "top";
+    canvasCtx.textBaseline = "top";
     canvasCtx.fillStyle = "red";
-    canvasCtx.fillText(timeStr, width - 20, 50);
-
+    canvasCtx.fillText(timeStr, width - 20, 0);
     if (!results.poseLandmarks) {
         return;
     }
-
     drawConnectors(canvasCtx, results.poseLandmarks, POSE_CONNECTIONS, {
         color: "#00FF00",
         lineWidth: 4,
     });
     drawLandmarks(canvasCtx, results.poseLandmarks, { color: "#FF0000", lineWidth: 2 });
-
     poseCoordinates = [];
     results.poseLandmarks.forEach((landmark) => {
         poseCoordinates.push([landmark.x * width, landmark.y * height]);
     });
-
-    setPosePoseCoordinates.forEach(setPosePoseCoordinate => {
+    setPosePoseCoordinates.forEach((setPosePoseCoordinate) => {
         setPosePoseCoordinate(poseCoordinates);
-    })
-
+    });
     poseNum = 0;
     for (let i = 0; i < poseStars.length; i++) {
-
-        if (poseStars[i].every(star => star.permanentlyActive || !star.hasPermanentlyActiveTimer)) {
+        if (poseStars[i].every((star) => star.permanentlyActive || !star.hasPermanentlyActiveTimer)) {
             poseNum += 1;
-        } else {
+        }
+        else {
             break;
         }
     }
-
     if (poseNum !== 0) {
         drawPoseName(`ท่าที่ ${poseNum + 1} - ${(poseNum + 1) % 2 === 0 ? "ด้านขวา" : "ด้านซ้าย"}`);
-    } else {
+    }
+    else {
         drawPoseName("ท่าที่ 1");
     }
-
     poseStars[poseNum].forEach((star) => {
         star.runAll();
     });
-
     if (timeLeft <= 0) {
-        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.clearRect(0, 0, width, height);
         canvasCtx.font = "150px Arial";
         canvasCtx.textAlign = "center";
-        canvasCtx.textBaseLine = "top";
+        canvasCtx.textBaseline = "top";
         canvasCtx.fillStyle = "red";
         canvasCtx.fillText("เกมจบ", width / 2 - 150, height / 2 - 150);
         return;
     }
 }
-
 module.exports = {
     runGameFrame,
     setCanvasCtx,

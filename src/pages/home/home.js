@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var { ipcRenderer } = require("electron");
 var Swal = require("sweetalert2");
 // Timer

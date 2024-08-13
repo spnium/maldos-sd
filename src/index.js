@@ -72,11 +72,7 @@ const createWindow = () => {
             preload: node_path_1.default.join(__dirname, "preload.js"),
         },
     });
-    setTimeout(() => {
-        showTimesUpNotification();
-    }, 6000);
     win.loadFile(node_path_1.default.join(__dirname, "/pages/main_page/main.html"));
-    // win.loadFile(path.join(__dirname, "/pages/login_page/login.html"));
     win.webContents.openDevTools({ mode: "detach" });
     win.on("closed", () => {
         win = null;

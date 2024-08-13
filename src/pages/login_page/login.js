@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const forms = document.querySelector(".forms");
 const pwShowHide = document.querySelectorAll(".eye-icon");
 const links = document.querySelectorAll(".link");

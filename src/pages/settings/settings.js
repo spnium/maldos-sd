@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var { ipcRenderer } = require("electron");
 document.getElementById("time_limit").oninput = function () {
     if (this.value < 0)

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 window.$ = window.jQuery = require("jquery");
 var { ipcRenderer } = require("electron");
 jQuery.ajaxSetup({ async: false });
