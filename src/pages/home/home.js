@@ -1,7 +1,10 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var { ipcRenderer } = require("electron");
-var Swal = require("sweetalert2");
+const electron_1 = require("electron");
+const sweetalert2_1 = __importDefault(require("sweetalert2"));
 // Timer
 const FULL_DASH_ARRAY = 283;
 const WARNING_THRESHOLD = 10;
@@ -21,7 +24,7 @@ const COLOR_CODES = {
 };
 let timeLeft;
 let TIME_LIMIT;
-ipcRenderer.on("update-timer", (_event, arg) => {
+electron_1.ipcRenderer.on("update-timer", (_event, arg) => {
     if (document.getElementById("timer")) {
         timeLeft = arg[0];
         TIME_LIMIT = arg[1];
@@ -114,18 +117,18 @@ function renderButtons(hidden) {
     <button id="snooze" class="${hiddenClassName}" onclick="snooze()">REMIND ME LATER</button>
     `;
 }
-ipcRenderer.on("render-buttons", (_event, arg) => {
+electron_1.ipcRenderer.on("render-buttons", (_event, arg) => {
     if (document.getElementById("controls"))
         renderButtons(arg);
 });
 function startGame() {
-    ipcRenderer.send("start-game");
+    electron_1.ipcRenderer.send("start-game");
 }
 function snooze() {
-    ipcRenderer.send("snooze");
+    electron_1.ipcRenderer.send("snooze");
 }
 function showWarning() {
-    Swal.fire({
+    sweetalert2_1.default.fire({
         title: "Warning",
         // text: "If you have one or more of the following symptoms please seek professional advice before continuing:\nUndiagnosed illnesses\nConstant muscle pain",
         html: `<span style="font-size: 18px;">If you have one or more of the following symptoms please seek professional advice before continuing:</span><br><span>-Undiagnosed illnesses<br>-Constant muscle pain</span>`,
@@ -134,23 +137,23 @@ function showWarning() {
         showConfirmButton: true,
     }).then((result) => {
         if (!result.isConfirmed) {
-            ipcRenderer.send("quit");
+            electron_1.ipcRenderer.send("quit");
         }
-        ipcRenderer.send("spawn-game-process");
+        electron_1.ipcRenderer.send("spawn-game-process");
     });
 }
 const showLoading = function () {
-    Swal.fire({
+    sweetalert2_1.default.fire({
         title: "loading",
         allowEscapeKey: false,
         allowOutsideClick: false,
         timer: 3300,
     });
-    Swal.showLoading();
+    sweetalert2_1.default.showLoading();
 };
-ipcRenderer.on("show-warning", () => {
+electron_1.ipcRenderer.on("show-warning", () => {
     showWarning();
 });
-ipcRenderer.on("show-loading", () => {
+electron_1.ipcRenderer.on("show-loading", () => {
     showLoading();
 });

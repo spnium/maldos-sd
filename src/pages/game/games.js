@@ -23,6 +23,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.runGameFrame = runGameFrame;
+exports.setCanvasCtx = setCanvasCtx;
 const drawing_utils_1 = require("@mediapipe/drawing_utils");
 const pose_1 = require("@mediapipe/pose");
 const utils_1 = require("../../pages/game/utils");

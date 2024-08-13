@@ -1,9 +1,14 @@
-var path = require("path");
-var { drawConnectors, drawLandmarks } = require("@mediapipe/drawing_utils");
-var { Pose, POSE_CONNECTIONS, POSE_LANDMARKS } = require("@mediapipe/pose");
-var { ipcRenderer } = require("electron");
+// var path = require("path");
+// var { drawConnectors, drawLandmarks } = require("@mediapipe/drawing_utils");
+// var { Pose, POSE_CONNECTIONS, POSE_LANDMARKS } = require("@mediapipe/pose");
+// var { ipcRenderer } = require("electron");
 
-var { runGameFrame, setCanvasCtx } = require("../../pages/game/games.js");
+// var { runGameFrame, setCanvasCtx } = require("../../pages/game/games.js");
+
+import * as path from "path";
+import { Pose } from "@mediapipe/pose";
+import { ipcRenderer } from "electron";
+import { runGameFrame, setCanvasCtx } from "../../pages/game/games";
 
 const videoElement = document.getElementsByClassName("input_video")[0] as HTMLVideoElement;
 const canvasElement = document.getElementsByClassName("output_canvas")[0] as HTMLCanvasElement;

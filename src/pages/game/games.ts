@@ -170,3 +170,5 @@ module.exports = {
 	runGameFrame,
 	setCanvasCtx,
 };
+
+export { runGameFrame, setCanvasCtx };
