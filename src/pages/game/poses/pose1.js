@@ -5,11 +5,11 @@ for (let i = 0; i < 33; i++) {
     poseCoordinates[i] = [-1000, -1000];
 }
 
-function setpose1Coordinates(coordinates) {
+function setposeCoordinates(coordinates) {
     poseCoordinates = coordinates;
 }
 
-function setpose1CanvasCtx(ctx) {
+function setposeCanvasCtx(ctx) {
     setCanvasCtx(ctx);
 }
 
@@ -107,7 +107,7 @@ let wristsMiddleStar = new Star(
     }
 );
 
-let pose1stars = [
+let poseStars = [
     topStar,
     pose1LeftStar,
     pose1RightStar,
@@ -117,7 +117,7 @@ let pose1stars = [
 ];
 
 module.exports = {
-    setpose1Coordinates,
-    setpose1CanvasCtx,
-    pose1stars
+    setposeCoordinates,
+    setposeCanvasCtx,
+    poseStars
 };

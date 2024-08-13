@@ -77,7 +77,7 @@ const createWindow = () => {
     }, 6000);
     win.loadFile(node_path_1.default.join(__dirname, "/pages/main_page/main.html"));
     // win.loadFile(path.join(__dirname, "/pages/login_page/login.html"));
-    // win.webContents.openDevTools({ mode: "detach" });
+    win.webContents.openDevTools({ mode: "detach" });
     win.on("closed", () => {
         win = null;
     });
@@ -187,8 +187,8 @@ const createWindow = () => {
     });
 };
 electron_1.app.whenReady().then(() => {
-    // createWindow();
-    createLoginWindow();
+    createWindow();
+    // createLoginWindow(); //VIDEODEMO
     electron_1.app.on("activate", () => {
         if (electron_1.BrowserWindow.getAllWindows().length === 0) {
             createWindow();

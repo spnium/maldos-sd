@@ -88,7 +88,7 @@ const createWindow = () => {
 	win.loadFile(path.join(__dirname, "/pages/main_page/main.html"));
 	// win.loadFile(path.join(__dirname, "/pages/login_page/login.html"));
 
-	// win.webContents.openDevTools({ mode: "detach" });
+	win.webContents.openDevTools({ mode: "detach" });
 
 	win.on("closed", () => {
 		win = null;
@@ -208,8 +208,8 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
-	// createWindow();
-	createLoginWindow();
+	createWindow();
+	// createLoginWindow(); //VIDEODEMO
 
 	app.on("activate", () => {
 		if (BrowserWindow.getAllWindows().length === 0) {

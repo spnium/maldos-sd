@@ -1,14 +1,35 @@
 var { drawConnectors, drawLandmarks } = require("@mediapipe/drawing_utils");
-var { POSE_CONNECTIONS, POSE_LANDMARKS } = require("@mediapipe/pose");
+var { POSE_CONNECTIONS } = require("@mediapipe/pose");
 
 var { width, height } = require("../../pages/game/utils");
-var { setpose1Coordinates, setpose1CanvasCtx, pose1stars } = require("../../pages/game/poses/pose1");
-var { setpose2Coordinates, setpose2CanvasCtx, pose2stars } = require("../../pages/game/poses/pose2");
-var { setpose3Coordinates, setpose3CanvasCtx, pose3stars } = require("../../pages/game/poses/pose3");
-var { setpose4Coordinates, setpose4CanvasCtx, pose4Lstars, pose4Rstars } = require("../../pages/game/poses/pose4");
+var Pose1 = require("../../pages/game/poses/pose1");
+var Pose2 = require("../../pages/game/poses/pose2");
 
-let setPosePoseCoordinates = [setpose1Coordinates, setpose2Coordinates, setpose3Coordinates, setpose4Coordinates];
-let setPoseCanvasCtxs = [setpose1CanvasCtx, setpose2CanvasCtx, setpose3CanvasCtx, setpose4CanvasCtx];
+let pose1 = {
+    starsArray: [Pose1.poseStars],
+    setCoordinates: Pose1.setposeCoordinates,
+    setCanvasCtx: Pose1.setposeCanvasCtx
+};
+
+let pose2 = {
+    starsArray: [Pose2.poseRstars, Pose2.poseRstars],
+    setCoordinates: Pose2.setposeCoordinates,
+    setCanvasCtx: Pose2.setposeCanvasCtx
+};
+
+let poses = [pose1, pose2];
+
+let poseStars = [];
+let setPoseCanvasCtxs = [];
+let setPosePoseCoordinates = [];
+
+poses.forEach(pose => {
+    pose.starsArray.forEach(star => {
+        poseStars.push(star);
+    });
+    setPoseCanvasCtxs.push(pose.setCanvasCtx);
+    setPosePoseCoordinates.push(pose.setCoordinates);
+});
 
 let canvasCtx;
 let poseCoordinates = [];
@@ -46,6 +67,30 @@ let timeLimit = 301;
 let timeLeft = timeLimit;
 let timeStr = formatTime(timeLeft);
 
+// let poseIDs = {
+//     pose1: 0,
+//     pose2right: 1,
+//     pose2left: 2,
+//     pose3right: 3,
+//     pose3left: 4,
+//     pose4left: 5,
+//     pose4right: 6,
+//     pose5left: 7,
+//     pose5right: 8,
+//     pose6left: 9,
+//     pose6right: 10
+// };
+
+let poseNum = 0;
+
+function drawPoseName(name) {
+    canvasCtx.font = "50px Arial";
+    canvasCtx.textAlign = "center";
+    canvasCtx.textBaseLine = "top";
+    canvasCtx.fillStyle = "black";
+    canvasCtx.fillText(name, width / 2 - 50, 50);
+}
+
 function runGameFrame(results) {
     if (startTime == -1000) {
         startTime = Date.now();
@@ -58,6 +103,12 @@ function runGameFrame(results) {
     canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
 
     canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
+
+    canvasCtx.font = "50px Arial";
+    canvasCtx.textAlign = "end";
+    canvasCtx.textBaseLine = "top";
+    canvasCtx.fillStyle = "red";
+    canvasCtx.fillText(timeStr, width - 20, 50);
 
     if (!results.poseLandmarks) {
         return;
@@ -78,41 +129,34 @@ function runGameFrame(results) {
         setPosePoseCoordinate(poseCoordinates);
     })
 
-    canvasCtx.font = "50px Arial";
-    canvasCtx.textAlign = "end";
-    canvasCtx.textBaseLine = "top";
-    canvasCtx.fillStyle = "red";
-    canvasCtx.fillText(timeStr, width - 20, 50);
+    poseNum = 0;
+    for (let i = 0; i < poseStars.length; i++) {
 
-    if (!pose1stars[2].permanentlyActive) {
-        canvasCtx.font = "50px Arial";
+        if (poseStars[i].every(star => star.permanentlyActive || !star.hasPermanentlyActiveTimer)) {
+            poseNum += 1;
+        } else {
+            break;
+        }
+    }
+
+    if (poseNum !== 0) {
+        drawPoseName(`ท่าที่ ${poseNum + 1} - ${(poseNum + 1) % 2 === 0 ? "ด้านขวา" : "ด้านซ้าย"}`);
+    } else {
+        drawPoseName("ท่าที่ 1");
+    }
+
+    poseStars[poseNum].forEach((star) => {
+        star.runAll();
+    });
+
+    if (timeLeft <= 0) {
+        canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+        canvasCtx.font = "150px Arial";
         canvasCtx.textAlign = "center";
         canvasCtx.textBaseLine = "top";
-        canvasCtx.fillStyle = "black";
-        canvasCtx.fillText("ท่าที่ 1", width / 2 - 50, 50);
-        pose1stars.forEach((star) => {
-            star.runAll();
-        });
-    } else {
-        if (!pose4Rstars[0].permanentlyActive) {
-            canvasCtx.font = "50px Arial";
-            canvasCtx.textAlign = "center";
-            canvasCtx.textBaseLine = "top";
-            canvasCtx.fillStyle = "black";
-            canvasCtx.fillText("ท่าที่ 2 - ด้านขวา", width / 2 - 50, 50);
-            pose4Rstars.forEach((star) => {
-                star.runAll();
-            });
-        } else {
-            canvasCtx.font = "50px Arial";
-            canvasCtx.textAlign = "center";
-            canvasCtx.textBaseLine = "top";
-            canvasCtx.fillStyle = "black";
-            canvasCtx.fillText("ท่าที่ 2 - ด้านซ้าย", width / 2 - 50, 50);
-            pose4Lstars.forEach((star) => {
-                star.runAll();
-            });
-        }
+        canvasCtx.fillStyle = "red";
+        canvasCtx.fillText("เกมจบ", width / 2 - 150, height / 2 - 150);
+        return;
     }
 }
 
