@@ -1,23 +1,32 @@
 "use strict";
+// import path from "path";
+// import { Pose, Results } from "@mediapipe/pose";
+// import { ipcRenderer } from "electron";
+// import { runGameFrame, setCanvasCtx } from "../../pages/game/games";
 Object.defineProperty(exports, "__esModule", { value: true });
+var path = require("path");
+var { Pose, Results } = require("@mediapipe/pose");
 var { ipcRenderer } = require("electron");
-ipcRenderer.on("start-web-game", async () => {
-    var { Pose } = require("@mediapipe/pose");
-    var { runGameFrame, setCanvasCtx } = require("../../pages/game/games");
-    var path = require("path");
-    var videoElement = document.getElementById("input_video");
-    var canvasElement = document.getElementById("output_canvas");
-    var canvasCtx = canvasElement.getContext("2d");
+var { runGameFrame, setCanvasCtx } = require("../../pages/game/games");
+var videoElement = document.getElementById("input_video");
+var canvasElement = document.getElementById("output_canvas");
+var canvasCtx = canvasElement.getContext("2d");
+var pose = new Pose({
+    locateFile: (file) => {
+        return path.join(__dirname, `../../../node_modules/@mediapipe/pose/${file}`);
+    },
+});
+ipcRenderer.on("start-web-game", () => {
     setCanvasCtx(canvasCtx);
+    startWebGame();
     function onResults(results) {
         runGameFrame(results);
     }
-    const pose = new Pose({
+    pose = new Pose({
         locateFile: (file) => {
             return path.join(__dirname, `../../../node_modules/@mediapipe/pose/${file}`);
         },
     });
-    await pose.initialize();
     pose.setOptions({
         selfieMode: true,
         modelComplexity: 1,
@@ -37,12 +46,12 @@ ipcRenderer.on("start-web-game", async () => {
                 },
             });
             videoElement.srcObject = stream;
-            await videoElement.play();
         }
         catch (error) {
             console.error("Error accessing webcam:", error);
         }
         setCanvasCtx(canvasCtx);
+        await videoElement.play();
     }
     const runFrame = async () => {
         setCanvasCtx(canvasCtx);
@@ -53,6 +62,7 @@ ipcRenderer.on("start-web-game", async () => {
         if (stream)
             stream.getTracks().forEach((track) => track.stop());
         stream = null;
+        return;
     }
     async function startWebGame() {
         var _a;
@@ -70,12 +80,10 @@ ipcRenderer.on("start-web-game", async () => {
     function setScores(scores) {
         ipcRenderer.send("set-scores", scores);
     }
-    // ipcRenderer.on("start-web-game", () => {
-    // 	startWebGame();
-    // });
-    startWebGame();
+    ipcRenderer.on("start-web-game", () => {
+        startWebGame();
+    });
     ipcRenderer.on("stop-web-game", () => {
         stopWebGame();
-        return;
     });
 });
