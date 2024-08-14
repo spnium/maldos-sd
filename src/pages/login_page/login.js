@@ -70,16 +70,15 @@ signupButton.addEventListener("click", async (e) => {
     let companyCode = signupCompanyCode.value;
     let email = signupEmail.value;
     let password = getHash(signupPassword.value);
-    let userID;
+    let userRef;
     try {
-        const docRef = await (0, firestore_1.addDoc)((0, firestore_1.collection)(db, "users"), {
+        userRef = await (0, firestore_1.addDoc)((0, firestore_1.collection)(db, "users"), {
             username: name,
             companyCode: companyCode,
             email: email,
             password: password,
         });
-        userID = docRef.id;
-        console.log("Document written with ID: ", docRef.id);
+        console.log("Document written with ID: ", userRef.id);
     }
     catch (e) {
         console.error("Error adding document: ", e);
@@ -87,13 +86,14 @@ signupButton.addEventListener("click", async (e) => {
     try {
         const docRef = await (0, firestore_1.addDoc)((0, firestore_1.collection)(db, "scores"), {
             poseStars: [0, 0, 0, 0, 0, 0],
-            userRef: userID,
+            userRef: userRef,
         });
         console.log("Document written with ID: ", docRef.id);
     }
     catch (e) {
         console.error("Error adding document: ", e);
     }
+    store.set("scores", [0, 0, 0, 0, 0, 0]);
     alert("Account created successfully!");
     forms.classList.toggle("show-signup");
 });

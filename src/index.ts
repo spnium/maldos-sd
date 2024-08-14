@@ -4,7 +4,16 @@ import Store from "electron-store"; // /Users/maytanan/Library/Application Suppo
 import { execSync } from "child_process";
 import "dotenv/config";
 import { initializeApp } from "firebase/app";
-import { collection, addDoc, getFirestore, query, where, getDocs } from "firebase/firestore";
+import {
+	collection,
+	addDoc,
+	getFirestore,
+	query,
+	where,
+	getDocs,
+	documentId,
+	doc,
+} from "firebase/firestore";
 
 const firebaseConfig = {
 	apiKey: process.env.apiKey,
@@ -65,8 +74,6 @@ let timeLeft = timeLimit;
 
 let timerInterval: any = null;
 
-let alreadyPlayedGame = false;
-
 let loginWin: BrowserWindow | null = null;
 
 const createLoginWindow = () => {
@@ -86,8 +93,8 @@ const createLoginWindow = () => {
 	loginWin.webContents.openDevTools({ mode: "detach" });
 
 	ipcMain.on("finish-login", () => {
-		loginWin!.close();
 		createWindow();
+		loginWin!.close();
 	});
 };
 
@@ -111,12 +118,6 @@ const createWindow = async () => {
 	win.on("closed", () => {
 		win = null;
 	});
-
-	user = store.get("user");
-	userID = store.get("userID");
-	const usersRef = collection(db, "scores");
-	const docQuery = query(usersRef, where("userRef", "==", userID));
-	const querySnapshot = await getDocs(docQuery);
 
 	const startTimer = () => {
 		if (!timerInterval) {
@@ -201,9 +202,7 @@ const createWindow = async () => {
 				sendToRenderer("render-settings", (timeLimit - 1) / 60);
 				break;
 			case "statistics":
-				if (alreadyPlayedGame) {
-					sendToRenderer("yellow", true);
-				}
+				sendToRenderer("load-statistics", true);
 				break;
 			default:
 				break;
@@ -230,17 +229,46 @@ const createWindow = async () => {
 		startGame();
 		sendToRenderer("show-loading", true);
 		restartTimer(TIMELIMIT);
-		alreadyPlayedGame = true;
 	});
 
 	ipcMain.on("snooze", () => {
 		restartTimer(SNOOZELIMIT);
 	});
+
+	user = store.get("user");
+	userID = store.get("userID");
+	const scoresRef = collection(db, "scores");
+	const userRef = doc(db, `/users/${userID}`);
+	const q = query(scoresRef, where("userRef", "==", userRef));
+	const querySnapshot = await getDocs(q);
+
+	let scoreRef: any = null;
+
+	if (querySnapshot.empty) {
+		console.log("No matching documents.");
+	}
+	querySnapshot.forEach((doc) => {
+		scoreRef = doc;
+		console.log(doc.id, " => ", doc.data().poseStars);
+		Scores = doc.data().poseStars;
+	});
+
+	const setScores = async (scores: number[]) => {
+		await addDoc(scoreRef, {
+			poseStars: scores,
+		});
+		console.log(scoreRef.data());
+		store.set("scores", scores);
+	};
+
+	ipcMain.on("set-scores", (_event, scores: number[]) => {
+		setScores(scores);
+	});
 };
 
 app.whenReady().then(() => {
 	// createWindow();
-	createLoginWindow(); //VIDEODEMO
+	createLoginWindow();
 
 	app.on("activate", () => {
 		if (BrowserWindow.getAllWindows().length === 0) {

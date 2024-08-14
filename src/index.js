@@ -58,7 +58,6 @@ let SNOOZELIMIT = 601;
 let timeLimit = TIMELIMIT;
 let timeLeft = timeLimit;
 let timerInterval = null;
-let alreadyPlayedGame = false;
 let loginWin = null;
 const createLoginWindow = () => {
     loginWin = new electron_1.BrowserWindow({
@@ -75,8 +74,8 @@ const createLoginWindow = () => {
     loginWin.loadFile(node_path_1.default.join(__dirname, "/pages/login_page/login.html"));
     loginWin.webContents.openDevTools({ mode: "detach" });
     electron_1.ipcMain.on("finish-login", () => {
-        loginWin.close();
         createWindow();
+        loginWin.close();
     });
 };
 const createWindow = async () => {
@@ -96,11 +95,6 @@ const createWindow = async () => {
     win.on("closed", () => {
         win = null;
     });
-    user = store.get("user");
-    userID = store.get("userID");
-    const usersRef = (0, firestore_1.collection)(db, "scores");
-    const docQuery = (0, firestore_1.query)(usersRef, (0, firestore_1.where)("userRef", "==", userID));
-    const querySnapshot = await (0, firestore_1.getDocs)(docQuery);
     const startTimer = () => {
         if (!timerInterval) {
             timerInterval = null;
@@ -180,9 +174,7 @@ const createWindow = async () => {
                 sendToRenderer("render-settings", (timeLimit - 1) / 60);
                 break;
             case "statistics":
-                if (alreadyPlayedGame) {
-                    sendToRenderer("yellow", true);
-                }
+                sendToRenderer("load-statistics", true);
                 break;
             default:
                 break;
@@ -206,15 +198,39 @@ const createWindow = async () => {
         startGame();
         sendToRenderer("show-loading", true);
         restartTimer(TIMELIMIT);
-        alreadyPlayedGame = true;
     });
     electron_1.ipcMain.on("snooze", () => {
         restartTimer(SNOOZELIMIT);
     });
+    user = store.get("user");
+    userID = store.get("userID");
+    const scoresRef = (0, firestore_1.collection)(db, "scores");
+    const userRef = (0, firestore_1.doc)(db, `/users/${userID}`);
+    const q = (0, firestore_1.query)(scoresRef, (0, firestore_1.where)("userRef", "==", userRef));
+    const querySnapshot = await (0, firestore_1.getDocs)(q);
+    let scoreRef = null;
+    if (querySnapshot.empty) {
+        console.log("No matching documents.");
+    }
+    querySnapshot.forEach((doc) => {
+        scoreRef = doc;
+        console.log(doc.id, " => ", doc.data().poseStars);
+        Scores = doc.data().poseStars;
+    });
+    const setScores = async (scores) => {
+        await (0, firestore_1.addDoc)(scoreRef, {
+            poseStars: scores,
+        });
+        console.log(scoreRef.data());
+        store.set("scores", scores);
+    };
+    electron_1.ipcMain.on("set-scores", (_event, scores) => {
+        setScores(scores);
+    });
 };
 electron_1.app.whenReady().then(() => {
     // createWindow();
-    createLoginWindow(); //VIDEODEMO
+    createLoginWindow();
     electron_1.app.on("activate", () => {
         if (electron_1.BrowserWindow.getAllWindows().length === 0) {
             createWindow();

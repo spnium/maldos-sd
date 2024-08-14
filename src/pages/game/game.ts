@@ -73,6 +73,10 @@ function stopWebGame() {
 	document.getElementById("listgamehidden")?.classList.add("hidden");
 }
 
+function setScores(scores: number[]) {
+	ipcRenderer.send("set-scores", scores);
+}
+
 ipcRenderer.on("start-web-game", () => {
 	startWebGame();
 });
