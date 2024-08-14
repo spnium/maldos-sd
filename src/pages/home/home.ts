@@ -1,5 +1,5 @@
 var { ipcRenderer } = require("electron");
-var Swal = require("sweetalert2");
+import Swal from "sweetalert2";
 
 // Timer
 const FULL_DASH_ARRAY = 283;

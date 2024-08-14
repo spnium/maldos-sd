@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const electron_1 = require("electron");
+var { ipcRenderer } = require("electron");
 const sweetalert2_1 = __importDefault(require("sweetalert2"));
 // Timer
 const FULL_DASH_ARRAY = 283;
@@ -24,7 +24,7 @@ const COLOR_CODES = {
 };
 let timeLeft;
 let TIME_LIMIT;
-electron_1.ipcRenderer.on("update-timer", (_event, arg) => {
+ipcRenderer.on("update-timer", (_event, arg) => {
     if (document.getElementById("timer")) {
         timeLeft = arg[0];
         TIME_LIMIT = arg[1];
@@ -117,15 +117,15 @@ function renderButtons(hidden) {
     <button id="snooze" class="${hiddenClassName}" onclick="snooze()">REMIND ME LATER</button>
     `;
 }
-electron_1.ipcRenderer.on("render-buttons", (_event, arg) => {
+ipcRenderer.on("render-buttons", (_event, arg) => {
     if (document.getElementById("controls"))
         renderButtons(arg);
 });
 function startGame() {
-    electron_1.ipcRenderer.send("start-game");
+    ipcRenderer.send("start-game");
 }
 function snooze() {
-    electron_1.ipcRenderer.send("snooze");
+    ipcRenderer.send("snooze");
 }
 function showWarning() {
     sweetalert2_1.default.fire({
@@ -137,9 +137,9 @@ function showWarning() {
         showConfirmButton: true,
     }).then((result) => {
         if (!result.isConfirmed) {
-            electron_1.ipcRenderer.send("quit");
+            ipcRenderer.send("quit");
         }
-        electron_1.ipcRenderer.send("spawn-game-process");
+        ipcRenderer.send("spawn-game-process");
     });
 }
 const showLoading = function () {
@@ -151,9 +151,9 @@ const showLoading = function () {
     });
     sweetalert2_1.default.showLoading();
 };
-electron_1.ipcRenderer.on("show-warning", () => {
+ipcRenderer.on("show-warning", () => {
     showWarning();
 });
-electron_1.ipcRenderer.on("show-loading", () => {
+ipcRenderer.on("show-loading", () => {
     showLoading();
 });

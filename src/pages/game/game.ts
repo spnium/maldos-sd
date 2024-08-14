@@ -1,22 +1,15 @@
-// var path = require("path");
-// var { drawConnectors, drawLandmarks } = require("@mediapipe/drawing_utils");
-// var { Pose, POSE_CONNECTIONS, POSE_LANDMARKS } = require("@mediapipe/pose");
-// var { ipcRenderer } = require("electron");
-
-// var { runGameFrame, setCanvasCtx } = require("../../pages/game/games.js");
-
-import * as path from "path";
-import { Pose } from "@mediapipe/pose";
+import path from "path";
+import { Pose, Results } from "@mediapipe/pose";
 import { ipcRenderer } from "electron";
 import { runGameFrame, setCanvasCtx } from "../../pages/game/games";
 
-const videoElement = document.getElementsByClassName("input_video")[0] as HTMLVideoElement;
-const canvasElement = document.getElementsByClassName("output_canvas")[0] as HTMLCanvasElement;
+const videoElement = document.getElementById("input_video") as HTMLVideoElement;
+const canvasElement = document.getElementById("output_canvas") as HTMLCanvasElement;
 const canvasCtx = canvasElement.getContext("2d") as CanvasRenderingContext2D;
 
 setCanvasCtx(canvasCtx);
 
-function onResults(results: any) {
+function onResults(results: Results) {
 	runGameFrame(results);
 }
 
@@ -37,7 +30,7 @@ pose.setOptions({
 
 pose.onResults(onResults);
 
-let stream: MediaStream | null = null;
+let stream: MediaStream | null;
 
 async function startWebcam() {
 	try {
@@ -49,7 +42,7 @@ async function startWebcam() {
 		});
 
 		videoElement.srcObject = stream;
-		videoElement.play();
+		await videoElement.play();
 	} catch (error) {
 		console.error("Error accessing webcam:", error);
 	}
@@ -62,23 +55,28 @@ const runFrame = async () => {
 	videoElement.requestVideoFrameCallback(runFrame);
 };
 
-videoElement.requestVideoFrameCallback(runFrame);
-
 function stopWebcam() {
-	if (stream) {
-		// Stop all tracks in the stream
-		stream.getTracks().forEach((track) => track.stop());
-		videoElement.srcObject = null; // Optionally clear the video source
-	}
+	if (stream) stream.getTracks().forEach((track) => track.stop());
+	stream = null;
+}
+
+async function startWebGame() {
+	setCanvasCtx(canvasCtx);
+	document.getElementById("listgamehidden")?.classList.remove("hidden");
+	await startWebcam();
+	videoElement.requestVideoFrameCallback(runFrame);
+}
+
+function stopWebGame() {
+	videoElement.requestVideoFrameCallback(() => {});
+	stopWebcam();
+	document.getElementById("listgamehidden")?.classList.add("hidden");
 }
 
 ipcRenderer.on("start-web-game", () => {
-	setCanvasCtx(canvasCtx);
-	startWebcam();
-	document.getElementById("listgamehidden")?.classList.remove("hidden");
+	startWebGame();
 });
 
 ipcRenderer.on("stop-web-game", () => {
-	stopWebcam();
-	document.getElementById("listgamehidden")?.classList.add("hidden");
+	stopWebGame();
 });

@@ -1,7 +1,7 @@
 import { app, BrowserWindow, ipcMain, Notification } from "electron";
 import path from "node:path";
 import Store from "electron-store";
-import { execSync, exec } from "child_process";
+import { execSync } from "child_process";
 
 const showTimesUpNotification = () => {
 	const notification = new Notification({

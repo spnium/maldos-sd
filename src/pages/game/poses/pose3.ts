@@ -67,19 +67,20 @@ let lHandStar = new Star(
 	poseCoordinates[poseLMS.LEFT_INDEX][0],
 	poseCoordinates[poseLMS.LEFT_INDEX][1],
 	() => {
-		return coordinatesTouching(
-			poseCoordinates[poseLMS.LEFT_PINKY],
-			eyes_midpoint(),
-			[200, 200]
+		console.log(eyes_to_shoulder_angle());
+		return (
+			coordinatesTouching(poseCoordinates[poseLMS.LEFT_INDEX], eyes_midpoint(), [200, 200]) &&
+			eyes_to_shoulder_angle() < 170
 		);
 	},
 	() => {
 		return poseCoordinates[poseLMS.LEFT_INDEX];
-	}
+	},
+	true
 );
 
-let poseRStars: Star[] = [];
-let poseLStars: Star[] = [];
+let poseRStars: Star[] = [lHandStar];
+let poseLStars: Star[] = [lHandStar];
 
 module.exports = {
 	setposeCoordinates,

@@ -42,13 +42,15 @@ function right_arm_angle() {
     return (0, utils_1.calculate_angle)(poseCoordinates[utils_1.poseLMS.RIGHT_WRIST], poseCoordinates[utils_1.poseLMS.RIGHT_ELBOW], poseCoordinates[utils_1.poseLMS.RIGHT_SHOULDER]);
 }
 let lHandStar = new utils_1.Star(poseCoordinates[utils_1.poseLMS.LEFT_INDEX][0], poseCoordinates[utils_1.poseLMS.LEFT_INDEX][1], () => {
-    return (0, utils_1.coordinatesTouching)(poseCoordinates[utils_1.poseLMS.LEFT_PINKY], eyes_midpoint(), [200, 200]);
+    console.log(eyes_to_shoulder_angle());
+    return ((0, utils_1.coordinatesTouching)(poseCoordinates[utils_1.poseLMS.LEFT_INDEX], eyes_midpoint(), [200, 200]) &&
+        eyes_to_shoulder_angle() < 170);
 }, () => {
     return poseCoordinates[utils_1.poseLMS.LEFT_INDEX];
-});
-let poseRStars = [];
+}, true);
+let poseRStars = [lHandStar];
 exports.poseRStars = poseRStars;
-let poseLStars = [];
+let poseLStars = [lHandStar];
 exports.poseLStars = poseLStars;
 module.exports = {
     setposeCoordinates,
