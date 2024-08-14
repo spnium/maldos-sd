@@ -9,3 +9,7 @@ document.getElementById("time_limit")!.oninput = function (this: any) {
 ipcRenderer.on("render-settings", (_event, arg) => {
 	document.getElementById("time_limit")!.setAttribute("value", String(arg));
 });
+
+document.getElementById("logout_btn")?.addEventListener("click", () => {
+	ipcRenderer.send("logout");
+});

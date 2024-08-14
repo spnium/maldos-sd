@@ -28,10 +28,12 @@
 		"@types/node": "^20.14.11",
 		"@types/ws": "^8.5.11",
 		"child_process": "^1.0.2",
+		"dotenv": "^16.4.5",
 		"electron": "31.2.1",
 		"electron-rebuild": "^3.2.9",
 		"electron-reloader": "^1.2.3",
 		"electron-store": "^8.2.0",
+		"firebase": "^10.12.5",
 		"jquery": "^3.7.1",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.5.4"

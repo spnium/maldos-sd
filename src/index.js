@@ -5,8 +5,22 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const electron_1 = require("electron");
 const node_path_1 = __importDefault(require("node:path"));
-const electron_store_1 = __importDefault(require("electron-store"));
+const electron_store_1 = __importDefault(require("electron-store")); // /Users/maytanan/Library/Application Support/maldos
 const child_process_1 = require("child_process");
+require("dotenv/config");
+const app_1 = require("firebase/app");
+const firestore_1 = require("firebase/firestore");
+const firebaseConfig = {
+    apiKey: process.env.apiKey,
+    authDomain: process.env.authDomain,
+    projectId: process.env.projectId,
+    storageBucket: process.env.storageBucket,
+    messagingSenderId: process.env.messagingSenderId,
+    appId: process.env.appId,
+};
+// Initialize Firebase
+const firebaseApp = (0, app_1.initializeApp)(firebaseConfig);
+const db = (0, firestore_1.getFirestore)(firebaseApp);
 const showTimesUpNotification = () => {
     const notification = new electron_1.Notification({
         title: "Time's up!",
@@ -24,6 +38,9 @@ try {
 }
 catch (_) { }
 const store = new electron_store_1.default();
+let user;
+let userID;
+let Scores = [];
 let win = null;
 let alreadyInit = false;
 let TIMELIMIT = +store.get("time_limit");
@@ -42,8 +59,9 @@ let timeLimit = TIMELIMIT;
 let timeLeft = timeLimit;
 let timerInterval = null;
 let alreadyPlayedGame = false;
+let loginWin = null;
 const createLoginWindow = () => {
-    let loginWin = new electron_1.BrowserWindow({
+    loginWin = new electron_1.BrowserWindow({
         width: 1080,
         height: 720,
         icon: node_path_1.default.join(__dirname, "/pages/assets/maldos.ico"),
@@ -55,12 +73,13 @@ const createLoginWindow = () => {
         },
     });
     loginWin.loadFile(node_path_1.default.join(__dirname, "/pages/login_page/login.html"));
+    loginWin.webContents.openDevTools({ mode: "detach" });
     electron_1.ipcMain.on("finish-login", () => {
         loginWin.close();
         createWindow();
     });
 };
-const createWindow = () => {
+const createWindow = async () => {
     win = new electron_1.BrowserWindow({
         width: 1080,
         height: 720,
@@ -77,6 +96,11 @@ const createWindow = () => {
     win.on("closed", () => {
         win = null;
     });
+    user = store.get("user");
+    userID = store.get("userID");
+    const usersRef = (0, firestore_1.collection)(db, "scores");
+    const docQuery = (0, firestore_1.query)(usersRef, (0, firestore_1.where)("userRef", "==", userID));
+    const querySnapshot = await (0, firestore_1.getDocs)(docQuery);
     const startTimer = () => {
         if (!timerInterval) {
             timerInterval = null;
@@ -137,7 +161,13 @@ const createWindow = () => {
         }, 2000);
         envInterval.run();
     });
-    electron_1.ipcMain.on("load-page", (event, page) => {
+    electron_1.ipcMain.on("logout", () => {
+        store.set("user", null);
+        user = null;
+        win.close();
+        createLoginWindow();
+    });
+    electron_1.ipcMain.on("load-page", (_event, page) => {
         switch (page) {
             case "home":
                 win.center();
@@ -183,8 +213,8 @@ const createWindow = () => {
     });
 };
 electron_1.app.whenReady().then(() => {
-    createWindow();
-    // createLoginWindow(); //VIDEODEMO
+    // createWindow();
+    createLoginWindow(); //VIDEODEMO
     electron_1.app.on("activate", () => {
         if (electron_1.BrowserWindow.getAllWindows().length === 0) {
             createWindow();

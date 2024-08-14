@@ -44,7 +44,10 @@ function eyes_midpoint() {
 // };
 
 function eyes_to_shoulder_angle() {
-	return calculate_angle(eyes_midpoint(), shoulders_midpoint(), [eyes_midpoint()[0], 2000]);
+	return calculate_angle(eyes_midpoint(), shoulders_midpoint(), [
+		eyes_midpoint()[0],
+		eyes_midpoint()[1] + 800,
+	]);
 }
 
 function left_arm_angle() {
@@ -70,7 +73,7 @@ let lHandStar = new Star(
 		console.log(eyes_to_shoulder_angle());
 		return (
 			coordinatesTouching(poseCoordinates[poseLMS.LEFT_INDEX], eyes_midpoint(), [200, 200]) &&
-			eyes_to_shoulder_angle() < 170
+			eyes_to_shoulder_angle() < 160
 		);
 	},
 	() => {
@@ -79,7 +82,25 @@ let lHandStar = new Star(
 	true
 );
 
-let poseRStars: Star[] = [lHandStar];
+let rHandStar = new Star(
+	poseCoordinates[poseLMS.RIGHT_INDEX][0],
+	poseCoordinates[poseLMS.RIGHT_INDEX][1],
+	() => {
+		console.log(eyes_to_shoulder_angle());
+		return (
+			coordinatesTouching(
+				poseCoordinates[poseLMS.RIGHT_INDEX],
+				eyes_midpoint(),
+				[200, 200]
+			) && eyes_to_shoulder_angle() < 160
+		);
+	},
+	() => {
+		return poseCoordinates[poseLMS.RIGHT_INDEX];
+	},
+	true
+);
+let poseRStars: Star[] = [rHandStar];
 let poseLStars: Star[] = [lHandStar];
 
 module.exports = {

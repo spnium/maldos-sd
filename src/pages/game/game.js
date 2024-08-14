@@ -1,6 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-// import path from "path";
+const path_1 = __importDefault(require("path"));
 const pose_1 = require("@mediapipe/pose");
 const electron_1 = require("electron");
 const games_1 = require("../../pages/game/games");
@@ -13,8 +16,7 @@ function onResults(results) {
 }
 const pose = new pose_1.Pose({
     locateFile: (file) => {
-        // return path.join(__dirname, `../../../node_modules/@mediapipe/pose/${file}`);
-        return `/Users/maytanan/Desktop/maldos/node_modules/@mediapipe/pose/${file}`;
+        return path_1.default.join(__dirname, `../../../node_modules/@mediapipe/pose/${file}`);
     },
 });
 pose.setOptions({

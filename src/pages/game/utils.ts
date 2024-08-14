@@ -117,7 +117,7 @@ class Star {
 		active = false,
 		color = "yellow",
 		permanentlyActive = false,
-		timeToTriggerPermanentlyActive = 1 //10
+		timeToTriggerPermanentlyActive = 10 //10
 	) {
 		this.x = x;
 		this.y = y;

@@ -1,7 +1,23 @@
 import { app, BrowserWindow, ipcMain, Notification } from "electron";
 import path from "node:path";
-import Store from "electron-store";
+import Store from "electron-store"; // /Users/maytanan/Library/Application Support/maldos
 import { execSync } from "child_process";
+import "dotenv/config";
+import { initializeApp } from "firebase/app";
+import { collection, addDoc, getFirestore, query, where, getDocs } from "firebase/firestore";
+
+const firebaseConfig = {
+	apiKey: process.env.apiKey,
+	authDomain: process.env.authDomain,
+	projectId: process.env.projectId,
+	storageBucket: process.env.storageBucket,
+	messagingSenderId: process.env.messagingSenderId,
+	appId: process.env.appId,
+};
+
+// Initialize Firebase
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
 
 const showTimesUpNotification = () => {
 	const notification = new Notification({
@@ -22,6 +38,10 @@ try {
 } catch (_) {}
 
 const store = new Store();
+
+let user;
+let userID;
+let Scores = [];
 
 let win: BrowserWindow | null = null;
 let alreadyInit = false;
@@ -47,8 +67,10 @@ let timerInterval: any = null;
 
 let alreadyPlayedGame = false;
 
+let loginWin: BrowserWindow | null = null;
+
 const createLoginWindow = () => {
-	let loginWin = new BrowserWindow({
+	loginWin = new BrowserWindow({
 		width: 1080,
 		height: 720,
 		icon: path.join(__dirname, "/pages/assets/maldos.ico"),
@@ -61,14 +83,15 @@ const createLoginWindow = () => {
 	});
 
 	loginWin.loadFile(path.join(__dirname, "/pages/login_page/login.html"));
+	loginWin.webContents.openDevTools({ mode: "detach" });
 
 	ipcMain.on("finish-login", () => {
-		loginWin.close();
+		loginWin!.close();
 		createWindow();
 	});
 };
 
-const createWindow = () => {
+const createWindow = async () => {
 	win = new BrowserWindow({
 		width: 1080,
 		height: 720,
@@ -88,6 +111,12 @@ const createWindow = () => {
 	win.on("closed", () => {
 		win = null;
 	});
+
+	user = store.get("user");
+	userID = store.get("userID");
+	const usersRef = collection(db, "scores");
+	const docQuery = query(usersRef, where("userRef", "==", userID));
+	const querySnapshot = await getDocs(docQuery);
 
 	const startTimer = () => {
 		if (!timerInterval) {
@@ -152,7 +181,14 @@ const createWindow = () => {
 		envInterval.run();
 	});
 
-	ipcMain.on("load-page", (event, page) => {
+	ipcMain.on("logout", () => {
+		store.set("user", null);
+		user = null;
+		win!.close();
+		createLoginWindow();
+	});
+
+	ipcMain.on("load-page", (_event, page) => {
 		switch (page) {
 			case "home":
 				win!.center();
@@ -203,8 +239,8 @@ const createWindow = () => {
 };
 
 app.whenReady().then(() => {
-	createWindow();
-	// createLoginWindow(); //VIDEODEMO
+	// createWindow();
+	createLoginWindow(); //VIDEODEMO
 
 	app.on("activate", () => {
 		if (BrowserWindow.getAllWindows().length === 0) {
