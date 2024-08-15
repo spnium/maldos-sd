@@ -205,6 +205,9 @@ const createWindow = async () => {
 			case "statistics":
 				sendToRenderer("load-statistics", true);
 				break;
+			case "leaderboard":
+				sendToRenderer("load-leaderboard", true);
+				break;
 			default:
 				break;
 		}
@@ -272,7 +275,6 @@ const createWindow = async () => {
 };
 
 app.whenReady().then(() => {
-	// createWindow();
 	createLoginWindow();
 
 	app.on("activate", () => {

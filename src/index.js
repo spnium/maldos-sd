@@ -176,6 +176,9 @@ const createWindow = async () => {
             case "statistics":
                 sendToRenderer("load-statistics", true);
                 break;
+            case "leaderboard":
+                sendToRenderer("load-leaderboard", true);
+                break;
             default:
                 break;
         }
@@ -233,7 +236,6 @@ const createWindow = async () => {
     });
 };
 electron_1.app.whenReady().then(() => {
-    // createWindow();
     createLoginWindow();
     electron_1.app.on("activate", () => {
         if (electron_1.BrowserWindow.getAllWindows().length === 0) {
