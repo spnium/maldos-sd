@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var { ipcRenderer } = require("electron");
+var Swal = require("sweetalert2");
 require("dotenv/config");
 const app_1 = require("firebase/app");
 const firestore_1 = require("firebase/firestore");
@@ -16,6 +17,13 @@ const firebaseConfig = {
 const firebaseApp = (0, app_1.initializeApp)(firebaseConfig);
 const db = (0, firestore_1.getFirestore)(firebaseApp);
 ipcRenderer.on("load-leaderboard", (_event, arg) => {
+    Swal.fire({
+        title: "loading leaderboard",
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        timer: 500,
+    });
+    Swal.showLoading();
     try {
         const leaderboard = document.getElementById("leaderboard");
         // get scores in descending order
@@ -30,7 +38,6 @@ ipcRenderer.on("load-leaderboard", (_event, arg) => {
                 });
                 let name = "";
                 const id = scoreDoc.data().userRef.id;
-                const userRef = (0, firestore_1.doc)(db, `users/${id}`);
                 const q = (0, firestore_1.query)((0, firestore_1.collection)(db, "users"), (0, firestore_1.where)((0, firestore_1.documentId)(), "==", id));
                 const querySnapshot = await (0, firestore_1.getDocs)(q);
                 console.log(querySnapshot);

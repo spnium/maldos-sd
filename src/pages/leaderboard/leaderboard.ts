@@ -1,4 +1,5 @@
 var { ipcRenderer } = require("electron");
+var Swal = require("sweetalert2");
 import "dotenv/config";
 import { initializeApp } from "firebase/app";
 import {
@@ -29,6 +30,14 @@ const firebaseApp = initializeApp(firebaseConfig);
 const db = getFirestore(firebaseApp);
 
 ipcRenderer.on("load-leaderboard", (_event, arg) => {
+	Swal.fire({
+		title: "loading leaderboard",
+		allowEscapeKey: false,
+		allowOutsideClick: false,
+		timer: 500,
+	});
+	Swal.showLoading();
+
 	try {
 		const leaderboard = document.getElementById("leaderboard");
 
