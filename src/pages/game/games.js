@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.runGameFrame = runGameFrame;
 exports.setCanvasCtx = setCanvasCtx;
@@ -31,10 +8,25 @@ const utils_1 = require("../../pages/game/utils");
 var ElectronStore = require("electron-store");
 var { ipcRenderer } = require("electron");
 var store = new ElectronStore();
-const Pose1 = __importStar(require("../../pages/game/poses/pose1"));
-const Pose2 = __importStar(require("../../pages/game/poses/pose2"));
-const Pose3 = __importStar(require("../../pages/game/poses/pose3"));
-const Pose4 = __importStar(require("../../pages/game/poses/pose4"));
+// import * as Pose1 from "../../pages/game/poses/pose1";
+// import * as Pose2 from "../../pages/game/poses/pose2";
+// import * as Pose3 from "../../pages/game/poses/pose3";
+// import * as Pose4 from "../../pages/game/poses/pose4";
+var Pose1;
+var Pose2;
+var Pose3;
+var Pose4;
+var Pose5;
+var Pose6;
+var posesInit = () => {
+    Pose1 = require("../../pages/game/poses/pose1");
+    Pose2 = require("../../pages/game/poses/pose2");
+    Pose3 = require("../../pages/game/poses/pose3");
+    Pose4 = require("../../pages/game/poses/pose4");
+    Pose5 = require("../../pages/game/poses/pose5");
+    Pose6 = require("../../pages/game/poses/pose6");
+};
+posesInit();
 let pose1 = {
     starsArray: [Pose1.poseStars],
     setCoordinates: Pose1.setposeCoordinates,
@@ -55,7 +47,17 @@ let pose4 = {
     setCoordinates: Pose4.setposeCoordinates,
     setCanvasCtx: Pose4.setposeCanvasCtx,
 };
-let poses = [pose1, pose2, pose3, pose4];
+let pose5 = {
+    starsArray: [Pose5.poseRStars, Pose5.poseLStars],
+    setCoordinates: Pose5.setposeCoordinates,
+    setCanvasCtx: Pose5.setposeCanvasCtx,
+};
+let pose6 = {
+    starsArray: [Pose6.poseRStars, Pose6.poseLStars],
+    setCoordinates: Pose6.setposeCoordinates,
+    setCanvasCtx: Pose6.setposeCanvasCtx,
+};
+let poses = [pose1, pose2, pose3, pose4, pose5, pose6];
 let poseStars = [];
 let setPoseCanvasCtxs = [];
 let setPosePoseCoordinates = [];
@@ -150,7 +152,7 @@ function runGameFrame(results) {
     setPosePoseCoordinates.forEach((setPosePoseCoordinate) => {
         setPosePoseCoordinate(poseCoordinates);
     });
-    poseNum = 0;
+    poseNum = 11;
     for (let i = 0; i < poseStars.length; i++) {
         if (poseStars[i].every((star) => star.permanentlyActive || !star.hasPermanentlyActiveTimer)) {
             poseNum += 1;
@@ -166,13 +168,13 @@ function runGameFrame(results) {
         setScores(scores);
         previousPoseNum = poseNum;
     }
-    if (timeLeft <= 0 || poseNum > 6) {
-        canvasCtx.clearRect(0, 0, utils_1.width, utils_1.height);
-        canvasCtx.font = "150px Arial";
-        canvasCtx.textAlign = "center";
-        canvasCtx.textBaseline = "top";
-        canvasCtx.fillStyle = "red";
-        canvasCtx.fillText("เกมจบ", utils_1.width / 2 - 150, utils_1.height / 2 - 150);
+    if (timeLeft <= 0 || poseNum > poseNames.length - 1) {
+        // canvasCtx.clearRect(0, 0, width, height);
+        // canvasCtx.font = "150px Arial";
+        // canvasCtx.textAlign = "center";
+        // canvasCtx.textBaseline = "top";
+        // canvasCtx.fillStyle = "red";
+        // canvasCtx.fillText("เกมจบ", width / 2 - 150, height / 2 - 150);
         if (poseNum > 0) {
             for (let i = 0; i < poseNum - 1; i++) {
                 scores[i] = 3;
@@ -181,6 +183,11 @@ function runGameFrame(results) {
             setScores(scores);
             previousPoseNum = poseNum;
         }
+        posesInit();
+        var { loadPage } = require("../../pages/main_page/main");
+        setTimeout(() => {
+            loadPage("statistics");
+        }, 100);
         return;
     }
     drawPoseName(poseNum);

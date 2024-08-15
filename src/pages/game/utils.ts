@@ -111,7 +111,7 @@ class Star {
 	functionToCheckActive: () => boolean;
 	functionToCheckCoordinates: () => number[];
 	hasPermanentlyActiveTimer = false;
-	timeToTriggerPermanentlyActive = 1;
+	timeToTriggerPermanentlyActive = 10;
 	constructor(
 		x: number,
 		y: number,
@@ -121,7 +121,7 @@ class Star {
 		active = false,
 		color = "yellow",
 		permanentlyActive = false,
-		timeToTriggerPermanentlyActive = 3 //10
+		timeToTriggerPermanentlyActive = 10 //10
 	) {
 		this.x = x;
 		this.y = y;

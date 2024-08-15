@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.loadPage = loadPage;
 window.$ = window.jQuery = require("jquery");
 var { ipcRenderer } = require("electron");
 jQuery.ajaxSetup({ async: false });
@@ -48,3 +49,4 @@ loadPage("home");
 ipcRenderer.on("load-page", (event, page) => {
     loadPage(page);
 });
+module.exports = { loadPage };

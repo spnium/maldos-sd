@@ -6,36 +6,66 @@ var { ipcRenderer } = require("electron");
 
 var store = new ElectronStore();
 
-import * as Pose1 from "../../pages/game/poses/pose1";
-import * as Pose2 from "../../pages/game/poses/pose2";
-import * as Pose3 from "../../pages/game/poses/pose3";
-import * as Pose4 from "../../pages/game/poses/pose4";
+// import * as Pose1 from "../../pages/game/poses/pose1";
+// import * as Pose2 from "../../pages/game/poses/pose2";
+// import * as Pose3 from "../../pages/game/poses/pose3";
+// import * as Pose4 from "../../pages/game/poses/pose4";
+
+var Pose1;
+var Pose2;
+var Pose3;
+var Pose4;
+var Pose5;
+var Pose6;
+
+var posesInit = () => {
+	Pose1 = require("../../pages/game/poses/pose1");
+	Pose2 = require("../../pages/game/poses/pose2");
+	Pose3 = require("../../pages/game/poses/pose3");
+	Pose4 = require("../../pages/game/poses/pose4");
+	Pose5 = require("../../pages/game/poses/pose5");
+	Pose6 = require("../../pages/game/poses/pose6");
+}
+
+posesInit();
 
 let pose1 = {
-	starsArray: [Pose1.poseStars],
-	setCoordinates: Pose1.setposeCoordinates,
-	setCanvasCtx: Pose1.setposeCanvasCtx,
+	starsArray: [Pose1!.poseStars],
+	setCoordinates: Pose1!.setposeCoordinates,
+	setCanvasCtx: Pose1!.setposeCanvasCtx,
 };
 
 let pose2 = {
-	starsArray: [Pose2.poseRstars, Pose2.poseLstars],
-	setCoordinates: Pose2.setposeCoordinates,
-	setCanvasCtx: Pose2.setposeCanvasCtx,
+	starsArray: [Pose2!.poseRstars, Pose2!.poseLstars],
+	setCoordinates: Pose2!.setposeCoordinates,
+	setCanvasCtx: Pose2!.setposeCanvasCtx,
 };
 
 let pose3 = {
-	starsArray: [Pose3.poseRStars, Pose3.poseLStars],
-	setCoordinates: Pose3.setposeCoordinates,
-	setCanvasCtx: Pose3.setposeCanvasCtx,
+	starsArray: [Pose3!.poseRStars, Pose3!.poseLStars],
+	setCoordinates: Pose3!.setposeCoordinates,
+	setCanvasCtx: Pose3!.setposeCanvasCtx,
 };
 
 let pose4 = {
-	starsArray: [Pose4.poseRStars, Pose4.poseLStars],
-	setCoordinates: Pose4.setposeCoordinates,
-	setCanvasCtx: Pose4.setposeCanvasCtx,
+	starsArray: [Pose4!.poseRStars, Pose4!.poseLStars],
+	setCoordinates: Pose4!.setposeCoordinates,
+	setCanvasCtx: Pose4!.setposeCanvasCtx,
 };
 
-let poses = [pose1, pose2, pose3, pose4];
+let pose5 = {
+	starsArray: [Pose5!.poseRStars, Pose5!.poseLStars],
+	setCoordinates: Pose5!.setposeCoordinates,
+	setCanvasCtx: Pose5!.setposeCanvasCtx,
+};
+
+let pose6 = {
+	starsArray: [Pose6!.poseRStars, Pose6!.poseLStars],
+	setCoordinates: Pose6!.setposeCoordinates,
+	setCanvasCtx: Pose6!.setposeCanvasCtx,
+};
+
+let poses = [pose1, pose2, pose3, pose4, pose5, pose6];
 
 let poseStars: Star[] = [];
 let setPoseCanvasCtxs: ((ctx: CanvasRenderingContext2D) => void)[] = [];
@@ -175,13 +205,13 @@ function runGameFrame(results: any) {
 		previousPoseNum = poseNum;
 	}
 
-	if (timeLeft <= 0 || poseNum > 6) {
-		canvasCtx.clearRect(0, 0, width, height);
-		canvasCtx.font = "150px Arial";
-		canvasCtx.textAlign = "center";
-		canvasCtx.textBaseline = "top";
-		canvasCtx.fillStyle = "red";
-		canvasCtx.fillText("เกมจบ", width / 2 - 150, height / 2 - 150);
+	if (timeLeft <= 0 || poseNum > poseNames.length - 1) {
+		// canvasCtx.clearRect(0, 0, width, height);
+		// canvasCtx.font = "150px Arial";
+		// canvasCtx.textAlign = "center";
+		// canvasCtx.textBaseline = "top";
+		// canvasCtx.fillStyle = "red";
+		// canvasCtx.fillText("เกมจบ", width / 2 - 150, height / 2 - 150);
 
 		if (poseNum > 0) {
 			for (let i = 0; i < poseNum - 1; i++) {
@@ -194,6 +224,12 @@ function runGameFrame(results: any) {
 			previousPoseNum = poseNum;
 		}
 
+		posesInit();
+
+		var { loadPage } = require("../../pages/main_page/main");
+		setTimeout(() => {
+			loadPage("statistics");
+		}, 100);
 		return;
 	}
 

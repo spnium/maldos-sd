@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var { ipcRenderer } = require("electron");
 var Swal = require("sweetalert2");
+var ElectronStore = require("electron-store");
 require("dotenv/config");
 const app_1 = require("firebase/app");
 const firestore_1 = require("firebase/firestore");
@@ -17,6 +18,8 @@ const firebaseConfig = {
 const firebaseApp = (0, app_1.initializeApp)(firebaseConfig);
 const db = (0, firestore_1.getFirestore)(firebaseApp);
 ipcRenderer.on("load-leaderboard", (_event, arg) => {
+    const store = new ElectronStore();
+    const userCompanyCode = store.get("user").companyCode;
     Swal.fire({
         title: "loading leaderboard",
         allowEscapeKey: false,
@@ -36,15 +39,20 @@ ipcRenderer.on("load-leaderboard", (_event, arg) => {
                     stars += star;
                 });
                 let name = "";
+                let companyCode = "";
                 const id = scoreDoc.data().userRef.id;
                 const q = (0, firestore_1.query)((0, firestore_1.collection)(db, "users"), (0, firestore_1.where)((0, firestore_1.documentId)(), "==", id));
                 const querySnapshot = await (0, firestore_1.getDocs)(q);
                 console.log(querySnapshot);
                 querySnapshot.forEach((doc) => {
                     name = doc.data().username;
+                    companyCode = doc.data().companyCode;
                 });
                 if (querySnapshot.empty) {
                     console.log("User not found");
+                }
+                if (companyCode !== userCompanyCode) {
+                    return;
                 }
                 leaderboard.innerHTML += `
                 <div class="leaderboard-item">

@@ -53,3 +53,6 @@ loadPage("home");
 ipcRenderer.on("load-page", (event, page) => {
 	loadPage(page);
 });
+
+module.exports = { loadPage };
+export { loadPage };

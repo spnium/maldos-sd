@@ -1,29 +1,29 @@
 "use strict";
-// import path from "path";
-// import { Pose, Results } from "@mediapipe/pose";
-// import { ipcRenderer } from "electron";
-// import { runGameFrame, setCanvasCtx } from "../../pages/game/games";
 Object.defineProperty(exports, "__esModule", { value: true });
-var path = require("path");
-var { Pose, Results } = require("@mediapipe/pose");
-var { ipcRenderer } = require("electron");
-var { runGameFrame, setCanvasCtx } = require("../../pages/game/games");
-var videoElement = document.getElementById("input_video");
-var canvasElement = document.getElementById("output_canvas");
-var canvasCtx = canvasElement.getContext("2d");
-var pose = new Pose({
-    locateFile: (file) => {
-        return path.join(__dirname, `../../../node_modules/@mediapipe/pose/${file}`);
-    },
-});
-ipcRenderer.on("start-web-game", () => {
+// import path from "path";
+const pose_1 = require("@mediapipe/pose");
+const electron_1 = require("electron");
+// import { runGameFrame, setCanvasCtx } from "../../pages/game/games";
+// var { ipcRenderer } = require("electron");
+// var { Pose } = require("@mediapipe/pose");
+electron_1.ipcRenderer.on("start-web-game", () => {
     try {
+        var path = require("path");
+        var { runGameFrame, setCanvasCtx } = require("../../pages/game/games");
+        var videoElement = document.getElementById("input_video");
+        var canvasElement = document.getElementById("output_canvas");
+        var canvasCtx = canvasElement.getContext("2d");
+        var pose = new pose_1.Pose({
+            locateFile: (file) => {
+                return path.join(__dirname, `../../../node_modules/@mediapipe/pose/${file}`);
+            },
+        });
         setCanvasCtx(canvasCtx);
         startWebGame();
         function onResults(results) {
             runGameFrame(results);
         }
-        pose = new Pose({
+        pose = new pose_1.Pose({
             locateFile: (file) => {
                 return path.join(__dirname, `../../../node_modules/@mediapipe/pose/${file}`);
             },
@@ -47,12 +47,15 @@ ipcRenderer.on("start-web-game", () => {
                     },
                 });
                 videoElement.srcObject = stream;
+                setTimeout(async () => {
+                    await videoElement.play();
+                }, 100);
             }
             catch (error) {
                 console.error("Error accessing webcam:", error);
+                console.log(error);
             }
             setCanvasCtx(canvasCtx);
-            await videoElement.play();
         }
         const runFrame = async () => {
             setCanvasCtx(canvasCtx);
@@ -78,11 +81,15 @@ ipcRenderer.on("start-web-game", () => {
             stopWebcam();
             (_a = document.getElementById("listgamehidden")) === null || _a === void 0 ? void 0 : _a.classList.add("hidden");
         }
-        ipcRenderer.on("start-web-game", () => {
-            startWebGame();
-        });
-        ipcRenderer.on("stop-web-game", () => {
+        module.exports = {
+            stopWebGame,
+        };
+        // ipcRenderer.on("start-web-game", () => {
+        // 	startWebGame();
+        // });
+        electron_1.ipcRenderer.on("stop-web-game", () => {
             stopWebGame();
+            return;
         });
     }
     catch (error) {

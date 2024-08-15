@@ -14,46 +14,25 @@ function setposeCoordinates(coordinates) {
 function setposeCanvasCtx(ctx) {
     (0, utils_1.setCanvasCtx)(ctx);
 }
-function shoulders_midpoint() {
-    return [
-        (poseCoordinates[utils_1.poseLMS.LEFT_ELBOW][0] + poseCoordinates[utils_1.poseLMS.RIGHT_ELBOW][0]) / 2,
-        (poseCoordinates[utils_1.poseLMS.LEFT_ELBOW][1] + poseCoordinates[utils_1.poseLMS.RIGHT_ELBOW][1]) / 2,
-    ];
+function leftKneeAngle() {
+    return (0, utils_1.calculate_angle)(poseCoordinates[utils_1.poseLMS.LEFT_HIP], poseCoordinates[utils_1.poseLMS.LEFT_KNEE], poseCoordinates[utils_1.poseLMS.LEFT_ANKLE]);
 }
-function eyes_midpoint() {
-    return [
-        (poseCoordinates[utils_1.poseLMS.LEFT_EYE_OUTER][0] + poseCoordinates[utils_1.poseLMS.RIGHT_EYE_OUTER][0]) /
-            2,
-        (poseCoordinates[utils_1.poseLMS.LEFT_EYE_OUTER][1] + poseCoordinates[utils_1.poseLMS.RIGHT_EYE_OUTER][1]) /
-            2,
-    ];
+function rightKneeAngle() {
+    return (0, utils_1.calculate_angle)(poseCoordinates[utils_1.poseLMS.RIGHT_HIP], poseCoordinates[utils_1.poseLMS.RIGHT_KNEE], poseCoordinates[utils_1.poseLMS.RIGHT_ANKLE]);
 }
-function eyes_to_shoulder_angle() {
-    return (0, utils_1.calculate_angle)(eyes_midpoint(), shoulders_midpoint(), [
-        eyes_midpoint()[0],
-        eyes_midpoint()[1] + 800,
-    ]);
-}
-function left_arm_angle() {
-    return (0, utils_1.calculate_angle)(poseCoordinates[utils_1.poseLMS.LEFT_WRIST], poseCoordinates[utils_1.poseLMS.LEFT_ELBOW], poseCoordinates[utils_1.poseLMS.LEFT_SHOULDER]);
-}
-function right_arm_angle() {
-    return (0, utils_1.calculate_angle)(poseCoordinates[utils_1.poseLMS.RIGHT_WRIST], poseCoordinates[utils_1.poseLMS.RIGHT_ELBOW], poseCoordinates[utils_1.poseLMS.RIGHT_SHOULDER]);
-}
-let lHandStar = new utils_1.Star(poseCoordinates[utils_1.poseLMS.LEFT_INDEX][0], poseCoordinates[utils_1.poseLMS.LEFT_INDEX][1], () => {
-    return ((0, utils_1.coordinatesTouching)(poseCoordinates[utils_1.poseLMS.LEFT_INDEX], eyes_midpoint(), [200, 200]) &&
-        eyes_to_shoulder_angle() < 160);
+let rrRightKneeStar = new utils_1.Star(poseCoordinates[utils_1.poseLMS.RIGHT_KNEE][0], poseCoordinates[utils_1.poseLMS.RIGHT_KNEE][1], () => {
+    return rightKneeAngle() < 45;
 }, () => {
-    return poseCoordinates[utils_1.poseLMS.LEFT_INDEX];
+    return poseCoordinates[utils_1.poseLMS.RIGHT_KNEE];
 }, true);
-let rHandStar = new utils_1.Star(poseCoordinates[utils_1.poseLMS.RIGHT_INDEX][0], poseCoordinates[utils_1.poseLMS.RIGHT_INDEX][1], () => {
-    return ((0, utils_1.coordinatesTouching)(poseCoordinates[utils_1.poseLMS.RIGHT_INDEX], eyes_midpoint(), [200, 200]) && eyes_to_shoulder_angle() < 160);
+let llLeftKneeStar = new utils_1.Star(poseCoordinates[utils_1.poseLMS.LEFT_KNEE][0], poseCoordinates[utils_1.poseLMS.LEFT_KNEE][1], () => {
+    return leftKneeAngle() < 45;
 }, () => {
-    return poseCoordinates[utils_1.poseLMS.RIGHT_INDEX];
+    return poseCoordinates[utils_1.poseLMS.LEFT_KNEE];
 }, true);
-let poseRStars = [rHandStar];
+let poseRStars = [rrRightKneeStar];
 exports.poseRStars = poseRStars;
-let poseLStars = [lHandStar];
+let poseLStars = [llLeftKneeStar];
 exports.poseLStars = poseLStars;
 module.exports = {
     setposeCoordinates,

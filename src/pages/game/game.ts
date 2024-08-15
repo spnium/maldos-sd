@@ -1,25 +1,25 @@
 // import path from "path";
-// import { Pose, Results } from "@mediapipe/pose";
-// import { ipcRenderer } from "electron";
+import { Pose, Results } from "@mediapipe/pose";
+import { ipcRenderer } from "electron";
 // import { runGameFrame, setCanvasCtx } from "../../pages/game/games";
-
-var path = require("path");
-var { Pose, Results } = require("@mediapipe/pose");
-var { ipcRenderer } = require("electron");
-var { runGameFrame, setCanvasCtx } = require("../../pages/game/games");
-
-var videoElement = document.getElementById("input_video") as HTMLVideoElement;
-var canvasElement = document.getElementById("output_canvas") as HTMLCanvasElement;
-var canvasCtx = canvasElement.getContext("2d") as CanvasRenderingContext2D;
-
-var pose = new Pose({
-	locateFile: (file: string) => {
-		return path.join(__dirname, `../../../node_modules/@mediapipe/pose/${file}`);
-	},
-});
+// var { ipcRenderer } = require("electron");
+// var { Pose } = require("@mediapipe/pose");
 
 ipcRenderer.on("start-web-game", () => {
 	try {
+		var path = require("path");
+		var { runGameFrame, setCanvasCtx } = require("../../pages/game/games");
+
+		var videoElement = document.getElementById("input_video") as HTMLVideoElement;
+		var canvasElement = document.getElementById("output_canvas") as HTMLCanvasElement;
+		var canvasCtx = canvasElement.getContext("2d") as CanvasRenderingContext2D;
+
+		var pose = new Pose({
+			locateFile: (file: string) => {
+				return path.join(__dirname, `../../../node_modules/@mediapipe/pose/${file}`);
+			},
+		});
+
 		setCanvasCtx(canvasCtx);
 		startWebGame();
 
@@ -54,13 +54,15 @@ ipcRenderer.on("start-web-game", () => {
 						height: { ideal: 720 },
 					},
 				});
-
 				videoElement.srcObject = stream;
+				setTimeout(async () => {
+					await videoElement.play();
+				}, 100);
 			} catch (error) {
 				console.error("Error accessing webcam:", error);
+				console.log(error);
 			}
 			setCanvasCtx(canvasCtx);
-			await videoElement.play();
 		}
 
 		const runFrame = async () => {
@@ -88,12 +90,17 @@ ipcRenderer.on("start-web-game", () => {
 			document.getElementById("listgamehidden")?.classList.add("hidden");
 		}
 
-		ipcRenderer.on("start-web-game", () => {
-			startWebGame();
-		});
+		module.exports = {
+			stopWebGame,
+		};
+
+		// ipcRenderer.on("start-web-game", () => {
+		// 	startWebGame();
+		// });
 
 		ipcRenderer.on("stop-web-game", () => {
 			stopWebGame();
+			return;
 		});
 	} catch (error) {
 		console.error(error);

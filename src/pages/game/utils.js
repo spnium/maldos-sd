@@ -90,14 +90,14 @@ function drawStar(cx, cy, outerRadius, fill = true, color = "yellow", thickness 
     }
 }
 class Star {
-    constructor(x, y, functionToCheckActive = () => false, functionToCheckCoordinates = () => [x, y], hasPermanentlyActiveTimer = false, active = false, color = "yellow", permanentlyActive = false, timeToTriggerPermanentlyActive = 3 //10
+    constructor(x, y, functionToCheckActive = () => false, functionToCheckCoordinates = () => [x, y], hasPermanentlyActiveTimer = false, active = false, color = "yellow", permanentlyActive = false, timeToTriggerPermanentlyActive = 10 //10
     ) {
         this.activeTime = 0;
         this.startActiveTime = NaN;
         this.previouslyActive = false;
         this.permanentlyActive = false;
         this.hasPermanentlyActiveTimer = false;
-        this.timeToTriggerPermanentlyActive = 1;
+        this.timeToTriggerPermanentlyActive = 10;
         this.x = x;
         this.y = y;
         this.active = active;
