@@ -41,7 +41,6 @@ function loadPage(name) {
     $(() => {
         $(".page_contents").empty();
         $(".page_contents").load(`../../pages/${name}/${name}.html`);
-        $.getScript(`../../pages/${name}/${name}.js`);
     });
     ipcRenderer.send("load-page", name);
 }

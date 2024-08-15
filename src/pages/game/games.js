@@ -166,11 +166,7 @@ function runGameFrame(results) {
         setScores(scores);
         previousPoseNum = poseNum;
     }
-    drawPoseName(poseNum);
-    poseStars[poseNum].forEach((star) => {
-        star.runAll();
-    });
-    if (timeLeft <= 0) {
+    if (timeLeft <= 0 || poseNum > 6) {
         canvasCtx.clearRect(0, 0, utils_1.width, utils_1.height);
         canvasCtx.font = "150px Arial";
         canvasCtx.textAlign = "center";
@@ -187,6 +183,10 @@ function runGameFrame(results) {
         }
         return;
     }
+    drawPoseName(poseNum);
+    poseStars[poseNum].forEach((star) => {
+        star.runAll();
+    });
 }
 module.exports = {
     runGameFrame,

@@ -37,12 +37,6 @@ function eyes_midpoint() {
 	];
 }
 
-// let top_of_head = () => {
-// 	// let r = eyes_midpoint()[0];
-// 	// return [eyes_midpoint()[0], eyes_midpoint()[1] - 0.3 * r];
-
-// };
-
 function eyes_to_shoulder_angle() {
 	return calculate_angle(eyes_midpoint(), shoulders_midpoint(), [
 		eyes_midpoint()[0],

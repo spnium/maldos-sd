@@ -26,14 +26,14 @@ let rightKneeStar = new utils_1.Star(poseCoordinates[utils_1.poseLMS.RIGHT_KNEE]
         (0, utils_1.coordinatesTouching)(poseCoordinates[utils_1.poseLMS.RIGHT_KNEE], poseCoordinates[utils_1.poseLMS.RIGHT_INDEX], [80, 80]));
 }, () => {
     return poseCoordinates[utils_1.poseLMS.RIGHT_KNEE];
-}, true, undefined, undefined, undefined, 10);
+}, true);
 let leftKneeStar = new utils_1.Star(poseCoordinates[utils_1.poseLMS.LEFT_KNEE][0], poseCoordinates[utils_1.poseLMS.LEFT_KNEE][1], () => {
     return (leftKneeAngle() < 60 ||
         (0, utils_1.coordinatesTouching)(poseCoordinates[utils_1.poseLMS.LEFT_ANKLE], poseCoordinates[utils_1.poseLMS.LEFT_KNEE], [100, 100]) ||
         (0, utils_1.coordinatesTouching)(poseCoordinates[utils_1.poseLMS.LEFT_KNEE], poseCoordinates[utils_1.poseLMS.LEFT_INDEX], [80, 80]));
 }, () => {
     return poseCoordinates[utils_1.poseLMS.LEFT_KNEE];
-}, true, undefined, undefined, undefined, 10);
+}, true);
 let poseRStars = [rightKneeStar];
 exports.poseRStars = poseRStars;
 let poseLStars = [leftKneeStar];
