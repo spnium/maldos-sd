@@ -34,6 +34,7 @@ var store = new ElectronStore();
 const Pose1 = __importStar(require("../../pages/game/poses/pose1"));
 const Pose2 = __importStar(require("../../pages/game/poses/pose2"));
 const Pose3 = __importStar(require("../../pages/game/poses/pose3"));
+const Pose4 = __importStar(require("../../pages/game/poses/pose4"));
 let pose1 = {
     starsArray: [Pose1.poseStars],
     setCoordinates: Pose1.setposeCoordinates,
@@ -49,7 +50,12 @@ let pose3 = {
     setCoordinates: Pose3.setposeCoordinates,
     setCanvasCtx: Pose3.setposeCanvasCtx,
 };
-let poses = [pose1, pose2, pose3];
+let pose4 = {
+    starsArray: [Pose4.poseRStars, Pose4.poseLStars],
+    setCoordinates: Pose4.setposeCoordinates,
+    setCanvasCtx: Pose4.setposeCanvasCtx,
+};
+let poses = [pose1, pose2, pose3, pose4];
 let poseStars = [];
 let setPoseCanvasCtxs = [];
 let setPosePoseCoordinates = [];
@@ -102,12 +108,12 @@ let poseNames = [
     "ท่าที่ 2 - ด้านซ้าย",
     "ท่าที่ 3 - ด้านขวา",
     "ท่าที่ 3 - ด้านซ้าย",
-    "ท่าที่ 4 - ด้านซ้าย",
     "ท่าที่ 4 - ด้านขวา",
-    "ท่าที่ 5 - ด้านซ้าย",
+    "ท่าที่ 4 - ด้านซ้าย",
     "ท่าที่ 5 - ด้านขวา",
-    "ท่าที่ 6 - ด้านซ้าย",
+    "ท่าที่ 5 - ด้านซ้าย",
     "ท่าที่ 6 - ด้านขวา",
+    "ท่าที่ 6 - ด้านซ้าย",
 ];
 function drawPoseName(nameNum) {
     canvasCtx.font = "50px Arial";
@@ -153,8 +159,8 @@ function runGameFrame(results) {
             break;
         }
     }
-    if (poseNum != previousPoseNum) {
-        for (let i = 0; i < poseNum; i++) {
+    if (poseNum != previousPoseNum && poseNum > 0) {
+        for (let i = 0; i < poseNum - 1; i++) {
             scores[i] = 3;
         }
         setScores(scores);
@@ -171,6 +177,14 @@ function runGameFrame(results) {
         canvasCtx.textBaseline = "top";
         canvasCtx.fillStyle = "red";
         canvasCtx.fillText("เกมจบ", utils_1.width / 2 - 150, utils_1.height / 2 - 150);
+        if (poseNum > 0) {
+            for (let i = 0; i < poseNum - 1; i++) {
+                scores[i] = 3;
+            }
+            scores[poseNum - 1] = 2;
+            setScores(scores);
+            previousPoseNum = poseNum;
+        }
         return;
     }
 }

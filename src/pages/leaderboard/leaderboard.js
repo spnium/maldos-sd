@@ -26,7 +26,6 @@ ipcRenderer.on("load-leaderboard", (_event, arg) => {
     Swal.showLoading();
     try {
         const leaderboard = document.getElementById("leaderboard");
-        // get scores in descending order
         const q = (0, firestore_1.query)((0, firestore_1.collection)(db, "scores"), (0, firestore_1.orderBy)("poseStars", "desc"), (0, firestore_1.limit)(999));
         (0, firestore_1.getDocs)(q).then((querySnapshot) => {
             leaderboard.innerHTML = "";

@@ -30,7 +30,7 @@ ipcRenderer.on("start-web-game", () => {
         });
         pose.setOptions({
             selfieMode: true,
-            modelComplexity: 1,
+            modelComplexity: 2,
             smoothLandmarks: true,
             enableSegmentation: false,
             minDetectionConfidence: 0.25,

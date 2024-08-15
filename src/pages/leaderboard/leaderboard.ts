@@ -41,7 +41,6 @@ ipcRenderer.on("load-leaderboard", (_event, arg) => {
 	try {
 		const leaderboard = document.getElementById("leaderboard");
 
-		// get scores in descending order
 		const q = query(collection(db, "scores"), orderBy("poseStars", "desc"), limit(999));
 		getDocs(q).then((querySnapshot) => {
 			leaderboard!.innerHTML = "";
