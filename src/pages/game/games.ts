@@ -1,6 +1,10 @@
 import { drawConnectors, drawLandmarks } from "@mediapipe/drawing_utils";
 import { POSE_CONNECTIONS } from "@mediapipe/pose";
 import { Star, width, height } from "../../pages/game/utils";
+var ElectronStore = require("electron-store");
+var { ipcRenderer } = require("electron");
+
+var store = new ElectronStore();
 
 import * as Pose1 from "../../pages/game/poses/pose1";
 import * as Pose2 from "../../pages/game/poses/pose2";
@@ -37,6 +41,10 @@ poses.forEach((pose) => {
 	setPoseCanvasCtxs.push(pose.setCanvasCtx);
 	setPosePoseCoordinates.push(pose.setCoordinates);
 });
+
+function setScores(scores: number[]) {
+	ipcRenderer.send("set-scores", scores);
+}
 
 let canvasCtx: CanvasRenderingContext2D;
 let poseCoordinates: number[][] = [];
@@ -75,6 +83,9 @@ let timeLeft = timeLimit;
 let timeStr = formatTime(timeLeft);
 
 let poseNum = 0;
+let previousPoseNum = 0;
+let scores = store.get("scores") || [0, 0, 0, 0, 0, 0];
+console.log(scores);
 
 let poseNames = [
 	"ท่าที่ 1",
@@ -147,6 +158,15 @@ function runGameFrame(results: any) {
 		} else {
 			break;
 		}
+	}
+
+	if (poseNum != previousPoseNum) {
+		for (let i = 0; i < poseNum; i++) {
+			scores[i] = 3;
+		}
+
+		setScores(scores);
+		previousPoseNum = poseNum;
 	}
 
 	drawPoseName(poseNum);

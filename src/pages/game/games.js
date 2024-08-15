@@ -28,6 +28,9 @@ exports.setCanvasCtx = setCanvasCtx;
 const drawing_utils_1 = require("@mediapipe/drawing_utils");
 const pose_1 = require("@mediapipe/pose");
 const utils_1 = require("../../pages/game/utils");
+var ElectronStore = require("electron-store");
+var { ipcRenderer } = require("electron");
+var store = new ElectronStore();
 const Pose1 = __importStar(require("../../pages/game/poses/pose1"));
 const Pose2 = __importStar(require("../../pages/game/poses/pose2"));
 const Pose3 = __importStar(require("../../pages/game/poses/pose3"));
@@ -57,6 +60,9 @@ poses.forEach((pose) => {
     setPoseCanvasCtxs.push(pose.setCanvasCtx);
     setPosePoseCoordinates.push(pose.setCoordinates);
 });
+function setScores(scores) {
+    ipcRenderer.send("set-scores", scores);
+}
 let canvasCtx;
 let poseCoordinates = [];
 for (let i = 0; i < 33; i++) {
@@ -87,6 +93,9 @@ let timeLimit = 301;
 let timeLeft = timeLimit;
 let timeStr = formatTime(timeLeft);
 let poseNum = 0;
+let previousPoseNum = 0;
+let scores = store.get("scores") || [0, 0, 0, 0, 0, 0];
+console.log(scores);
 let poseNames = [
     "ท่าที่ 1",
     "ท่าที่ 2 - ด้านขวา",
@@ -143,6 +152,13 @@ function runGameFrame(results) {
         else {
             break;
         }
+    }
+    if (poseNum != previousPoseNum) {
+        for (let i = 0; i < poseNum; i++) {
+            scores[i] = 3;
+        }
+        setScores(scores);
+        previousPoseNum = poseNum;
     }
     drawPoseName(poseNum);
     poseStars[poseNum].forEach((star) => {

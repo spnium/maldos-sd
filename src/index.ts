@@ -13,6 +13,7 @@ import {
 	getDocs,
 	documentId,
 	doc,
+	updateDoc,
 } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -248,16 +249,20 @@ const createWindow = async () => {
 		console.log("No matching documents.");
 	}
 	querySnapshot.forEach((doc) => {
-		scoreRef = doc;
+		scoreRef = doc.ref;
 		console.log(doc.id, " => ", doc.data().poseStars);
 		Scores = doc.data().poseStars;
 	});
 
 	const setScores = async (scores: number[]) => {
-		await addDoc(scoreRef, {
-			poseStars: scores,
-		});
-		console.log(scoreRef.data());
+		try {
+			updateDoc(scoreRef, {
+				poseStars: scores,
+			});
+		} catch (e) {
+			console.error("Error adding document: ", e);
+		}
+
 		store.set("scores", scores);
 	};
 

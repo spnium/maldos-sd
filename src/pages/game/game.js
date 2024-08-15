@@ -17,73 +17,75 @@ var pose = new Pose({
     },
 });
 ipcRenderer.on("start-web-game", () => {
-    setCanvasCtx(canvasCtx);
-    startWebGame();
-    function onResults(results) {
-        runGameFrame(results);
-    }
-    pose = new Pose({
-        locateFile: (file) => {
-            return path.join(__dirname, `../../../node_modules/@mediapipe/pose/${file}`);
-        },
-    });
-    pose.setOptions({
-        selfieMode: true,
-        modelComplexity: 1,
-        smoothLandmarks: true,
-        enableSegmentation: false,
-        minDetectionConfidence: 0.25,
-        minTrackingConfidence: 0.25,
-    });
-    pose.onResults(onResults);
-    let stream;
-    async function startWebcam() {
-        try {
-            stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    width: { ideal: 1080 },
-                    height: { ideal: 720 },
-                },
-            });
-            videoElement.srcObject = stream;
-        }
-        catch (error) {
-            console.error("Error accessing webcam:", error);
-        }
+    try {
         setCanvasCtx(canvasCtx);
-        await videoElement.play();
-    }
-    const runFrame = async () => {
-        setCanvasCtx(canvasCtx);
-        await pose.send({ image: videoElement });
-        videoElement.requestVideoFrameCallback(runFrame);
-    };
-    function stopWebcam() {
-        if (stream)
-            stream.getTracks().forEach((track) => track.stop());
-        stream = null;
-        return;
-    }
-    async function startWebGame() {
-        var _a;
-        setCanvasCtx(canvasCtx);
-        (_a = document.getElementById("listgamehidden")) === null || _a === void 0 ? void 0 : _a.classList.remove("hidden");
-        await startWebcam();
-        videoElement.requestVideoFrameCallback(runFrame);
-    }
-    function stopWebGame() {
-        var _a;
-        videoElement.requestVideoFrameCallback(() => { });
-        stopWebcam();
-        (_a = document.getElementById("listgamehidden")) === null || _a === void 0 ? void 0 : _a.classList.add("hidden");
-    }
-    function setScores(scores) {
-        ipcRenderer.send("set-scores", scores);
-    }
-    ipcRenderer.on("start-web-game", () => {
         startWebGame();
-    });
-    ipcRenderer.on("stop-web-game", () => {
-        stopWebGame();
-    });
+        function onResults(results) {
+            runGameFrame(results);
+        }
+        pose = new Pose({
+            locateFile: (file) => {
+                return path.join(__dirname, `../../../node_modules/@mediapipe/pose/${file}`);
+            },
+        });
+        pose.setOptions({
+            selfieMode: true,
+            modelComplexity: 1,
+            smoothLandmarks: true,
+            enableSegmentation: false,
+            minDetectionConfidence: 0.25,
+            minTrackingConfidence: 0.25,
+        });
+        pose.onResults(onResults);
+        let stream;
+        async function startWebcam() {
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 1080 },
+                        height: { ideal: 720 },
+                    },
+                });
+                videoElement.srcObject = stream;
+            }
+            catch (error) {
+                console.error("Error accessing webcam:", error);
+            }
+            setCanvasCtx(canvasCtx);
+            await videoElement.play();
+        }
+        const runFrame = async () => {
+            setCanvasCtx(canvasCtx);
+            await pose.send({ image: videoElement });
+            videoElement.requestVideoFrameCallback(runFrame);
+        };
+        function stopWebcam() {
+            if (stream)
+                stream.getTracks().forEach((track) => track.stop());
+            stream = null;
+            return;
+        }
+        async function startWebGame() {
+            var _a;
+            setCanvasCtx(canvasCtx);
+            (_a = document.getElementById("listgamehidden")) === null || _a === void 0 ? void 0 : _a.classList.remove("hidden");
+            await startWebcam();
+            videoElement.requestVideoFrameCallback(runFrame);
+        }
+        function stopWebGame() {
+            var _a;
+            videoElement.requestVideoFrameCallback(() => { });
+            stopWebcam();
+            (_a = document.getElementById("listgamehidden")) === null || _a === void 0 ? void 0 : _a.classList.add("hidden");
+        }
+        ipcRenderer.on("start-web-game", () => {
+            startWebGame();
+        });
+        ipcRenderer.on("stop-web-game", () => {
+            stopWebGame();
+        });
+    }
+    catch (error) {
+        console.error(error);
+    }
 });

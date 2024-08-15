@@ -213,15 +213,19 @@ const createWindow = async () => {
         console.log("No matching documents.");
     }
     querySnapshot.forEach((doc) => {
-        scoreRef = doc;
+        scoreRef = doc.ref;
         console.log(doc.id, " => ", doc.data().poseStars);
         Scores = doc.data().poseStars;
     });
     const setScores = async (scores) => {
-        await (0, firestore_1.addDoc)(scoreRef, {
-            poseStars: scores,
-        });
-        console.log(scoreRef.data());
+        try {
+            (0, firestore_1.updateDoc)(scoreRef, {
+                poseStars: scores,
+            });
+        }
+        catch (e) {
+            console.error("Error adding document: ", e);
+        }
         store.set("scores", scores);
     };
     electron_1.ipcMain.on("set-scores", (_event, scores) => {
