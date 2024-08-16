@@ -121,7 +121,8 @@ function drawPoseName(nameNum) {
     canvasCtx.font = "50px Arial";
     canvasCtx.textAlign = "center";
     canvasCtx.textBaseline = "top";
-    canvasCtx.fillStyle = "black";
+    // canvasCtx.fillStyle = "black";
+    canvasCtx.fillStyle = "#118811";
     canvasCtx.fillText(poseNames[nameNum], utils_1.width / 2 - 50, 0);
 }
 function runGameFrame(results) {
@@ -152,7 +153,7 @@ function runGameFrame(results) {
     setPosePoseCoordinates.forEach((setPosePoseCoordinate) => {
         setPosePoseCoordinate(poseCoordinates);
     });
-    poseNum = 11;
+    poseNum = 0;
     for (let i = 0; i < poseStars.length; i++) {
         if (poseStars[i].every((star) => star.permanentlyActive || !star.hasPermanentlyActiveTimer)) {
             poseNum += 1;
