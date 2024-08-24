@@ -141,9 +141,8 @@ function drawPoseName(nameNum: number) {
 	canvasCtx.font = "50px Arial";
 	canvasCtx.textAlign = "center";
 	canvasCtx.textBaseline = "top";
-	// canvasCtx.fillStyle = "black";
 	canvasCtx.fillStyle = "#118811";
-	canvasCtx.fillText(poseNames[nameNum], width / 2 - 50, 0);
+	canvasCtx.fillText(poseNames[nameNum], width / 2 - 50, 10);
 }
 
 function runGameFrame(results: any) {

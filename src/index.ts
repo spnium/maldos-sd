@@ -91,7 +91,7 @@ const createLoginWindow = () => {
 	});
 
 	loginWin.loadFile(path.join(__dirname, "/pages/login_page/login.html"));
-	loginWin.webContents.openDevTools({ mode: "detach" });
+	// loginWin.webContents.openDevTools({ mode: "detach" });
 
 	ipcMain.on("finish-login", () => {
 		createWindow();
@@ -114,7 +114,7 @@ const createWindow = async () => {
 
 	win.loadFile(path.join(__dirname, "/pages/main_page/main.html"));
 
-	win.webContents.openDevTools({ mode: "detach" });
+	// win.webContents.openDevTools({ mode: "detach" });
 
 	win.on("closed", () => {
 		win = null;
@@ -347,6 +347,6 @@ async function getSound(): Promise<number> {
 		// 		soundLevel = +stdout.toString().replace(/\D/g, "");
 		// 	}
 		// );
-		resolve(59);
+		resolve(63);
 	});
 }

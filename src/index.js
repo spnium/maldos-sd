@@ -72,7 +72,7 @@ const createLoginWindow = () => {
         },
     });
     loginWin.loadFile(node_path_1.default.join(__dirname, "/pages/login_page/login.html"));
-    loginWin.webContents.openDevTools({ mode: "detach" });
+    // loginWin.webContents.openDevTools({ mode: "detach" });
     electron_1.ipcMain.on("finish-login", () => {
         createWindow();
         loginWin.close();
@@ -91,7 +91,7 @@ const createWindow = async () => {
         },
     });
     win.loadFile(node_path_1.default.join(__dirname, "/pages/main_page/main.html"));
-    win.webContents.openDevTools({ mode: "detach" });
+    // win.webContents.openDevTools({ mode: "detach" });
     win.on("closed", () => {
         win = null;
     });
@@ -297,6 +297,6 @@ async function getSound() {
         // 		soundLevel = +stdout.toString().replace(/\D/g, "");
         // 	}
         // );
-        resolve(59);
+        resolve(63);
     });
 }
